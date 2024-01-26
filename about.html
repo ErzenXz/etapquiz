@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>eTapQuiz</title>
+
+      <link rel="stylesheet" href="style.css" />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link
+         href="https://fonts.googleapis.com/css2?family=Lato&family=Press+Start+2P&display=swap"
+         rel="stylesheet"
+      />
+
+      <script
+         defer
+         src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-auth.min.js"
+         integrity="sha512-GAEvFso2oksY5JFkHlrfLhZgAV6aL48qxnbxPnbKnNLeG/XsU/c0lh/g9gocZ2RtbRx6VDTqspPEy9ixWvbfzw=="
+         crossorigin="anonymous"
+         referrerpolicy="no-referrer"
+      ></script>
+
+      <script defer src="https://kit.fontawesome.com/f45cd9c28c.js"></script>
+      <div id="victoryAA"></div>
+   </head>
+   <body>
+      <div class="nav" id="nav2">
+         <div class="nav__logo">eTapQuiz</div>
+         <div class="nav__links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="#join" onclick="joinQuizCode()">Join</a>
+            <!-- <a href="leaderboard.html">Leaderboard</a> -->
+            <a href="about.html">About</a>
+            <a href="account/profile.index">Account</a>
+         </div>
+         <div class="nav__auth" id="navAuth">
+            <span id="theme-switcher"><i class="fa-solid fa-moon"></i></span>
+            <span id="logout" onclick="logOut()"
+               ><i class="fa-solid fa-right-from-bracket"></i
+            ></span>
+         </div>
+         <div class="nav__burger" onclick="toggleMenu()">
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
+         </div>
+      </div>
+
+      <main>
+         <section class="about-section">
+            <h1>About eTapQuiz</h1>
+            <p>
+               eTapQuiz is a quiz app inspired by Kahoot. It allows users to create and participate
+               in interactive quizzes. With a user-friendly interface and engaging features,
+               eTapQuiz makes learning fun and interactive.
+            </p>
+            <p>
+               Whether you are a student looking to test your knowledge or a teacher wanting to
+               create educational quizzes, eTapQuiz has got you covered. Create your own quizzes or
+               explore a wide range of quizzes created by other users.
+            </p>
+            <p>
+               eTapQuiz offers a variety of question types, including multiple choice, true/false,
+               and open-ended questions. It also provides real-time feedback and a leaderboard to
+               track your progress and compete with others.
+            </p>
+            <p>Join the eTapQuiz community today and start quizzing!</p>
+         </section>
+
+         <section class="features-section">
+            <h2>Key Features</h2>
+            <ul>
+               <li>Interactive quizzes</li>
+               <li>Various question types</li>
+               <li>Real-time feedback</li>
+               <li>Leaderboard</li>
+               <li>User-friendly interface</li>
+               <li>Customizable quizzes</li>
+               <li>Engaging learning experience</li>
+            </ul>
+         </section>
+
+         <section class="how-to-section">
+            <h2>How to Use eTapQuiz</h2>
+            <ol>
+               <li>Create an account or log in to your existing account.</li>
+               <li>Explore the available quizzes or create your own.</li>
+               <li>Join a quiz by entering the quiz code or participate in a public quiz.</li>
+               <li>Answer the quiz questions within the given time limit.</li>
+               <li>Receive instant feedback on your answers.</li>
+               <li>Check the leaderboard to see how you rank against other participants.</li>
+               <li>Review your quiz results and track your progress.</li>
+               <li>Share your quiz scores with friends and challenge them to beat your score.</li>
+            </ol>
+         </section>
+      </main>
+
+      <footer>
+         <p>Copyright 2024 - Erzen Krasniqi</p>
+      </footer>
+
+      <script
+         src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-app.min.js"
+         integrity="sha512-Gvs2fg+wkNjydmkwgHwwTkuWlr9Gz0hTjFwJ4InwYwbAA3rtL2kBIHt7YRfwVCdW77QF2Ne2DdHQVCcULM89ig=="
+         crossorigin="anonymous"
+         referrerpolicy="no-referrer"
+      ></script>
+
+      <script>
+         // Your web app's Firebase configuration
+         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+         const firebaseConfig = {
+            apiKey: "AIzaSyBfxhlQ5c8sk_SHKJTvQ6tWPdzVAt4PBSA",
+            authDomain: "tapquiz-571c1.firebaseapp.com",
+            databaseURL: "https://tapquiz-571c1-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "tapquiz-571c1",
+            storageBucket: "tapquiz-571c1.appspot.com",
+            messagingSenderId: "270518942009",
+            appId: "1:270518942009:web:44a9a6c1de48fe403550e8",
+            measurementId: "G-QRTCR1G4GB",
+         };
+         // Initialize Firebase
+         firebase.initializeApp(firebaseConfig);
+      </script>
+
+      <div id="victoryS">
+         <div class="victory"></div>
+         <div class="imposter">
+            <div class="spacesuit">
+               <div class="chest-and-head"></div>
+               <div class="legs"></div>
+               <div class="arm"></div>
+               <div class="helmet-glass"></div>
+            </div>
+         </div>
+         <div class="background"></div>
+         <div class="name"></div>
+      </div>
+
+      <style>
+         main {
+            margin-bottom: 80px;
+            width: 80%;
+            margin: auto;
+            margin-top: 80px;
+         }
+
+         main section {
+            margin-bottom: 80px;
+            background-color: var(--primary);
+            padding: 40px;
+            border-radius: 10px;
+         }
+      </style>
+
+      <script>
+         // Function to toggle the menu
+         function toggleMenu() {
+            const navLinks = document.getElementById("navLinks");
+            const navAuth = document.getElementById("navAuth");
+            const navBurger = document.querySelector(".nav__burger");
+
+            navLinks.classList.toggle("show");
+            navAuth.classList.toggle("show");
+            navBurger.classList.toggle("active");
+         }
+
+         // Close the menu when a link is clicked
+         const navLinks = document.querySelectorAll(".nav__links a");
+         navLinks.forEach((link) => {
+            link.addEventListener("click", () => {
+               const navLinks = document.getElementById("navLinks");
+               const navAuth = document.getElementById("navAuth");
+               const navBurger = document.querySelector(".nav__burger");
+
+               navLinks.classList.remove("show");
+               navAuth.classList.remove("show");
+               navBurger.classList.remove("active");
+            });
+         });
+      </script>
+
+      <script src="theme.js"></script>
+      <script src="authcheck.js" defer></script>
+   </body>
+</html>
