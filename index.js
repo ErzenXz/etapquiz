@@ -690,7 +690,7 @@ function doDynamic() {
       // If there are no more quizes to load then hide the load more button
 
       if (addedItems === 0) {
-         document.getElementById("quizContainer").innerHTML += ` <p>No more quizes to load</p>`;
+         toast("No more quizes to load");
          document.getElementById("loading").style.display = "none";
          document.getElementById("loadMore").classList.add("hidden");
       }
@@ -1131,8 +1131,6 @@ function showLeaderboard() {
 }
 
 function toast(message, duration = 4500, delay = 0) {
-   // Check for existing toast class elements
-
    const existingToast = document.querySelector(".toast");
 
    if (existingToast) {
