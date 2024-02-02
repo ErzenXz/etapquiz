@@ -254,11 +254,23 @@ function victory(n) {
    document.getElementById("victoryAA").appendChild(style);
    document.getElementById("quizContainer").classList.add("hidden");
    document.getElementById("quizBB").classList.add("hidden");
+   document.getElementById("footer").classList.add("hidden");
+   document.getElementById("nav2").classList.add("hidden");
+   document.getElementById("addQuizBtn").classList.add("hidden");
+   document.getElementById("loadMore").classList.add("hidden");
+   document.getElementById("ping").classList.add("hidden");
+   document.getElementById("h3").classList.add("hidden");
    //    document.body.appendChild(style);
 
    setTimeout(() => {
       document.getElementById("victoryAA").innerHTML = "";
       document.getElementById("quizContainer").classList.remove("hidden");
       document.getElementById("quizBB").classList.remove("hidden");
+      document.getElementById("footer").classList.remove("hidden");
+      document.getElementById("nav2").classList.remove("hidden");
+      document.getElementById("addQuizBtn").classList.remove("hidden");
+      document.getElementById("loadMore").classList.remove("hidden");
+      document.getElementById("ping").classList.remove("hidden");
+      document.getElementById("h3").classList.remove("hidden");
    }, 10000);
 }

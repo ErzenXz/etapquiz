@@ -554,6 +554,8 @@ let searchIndex = [];
 function doDynamic() {
    items = Math.max(0, Math.min(items + 2 * Math.floor(items / 2), 100));
 
+   let addedItems = 0;
+
    document.getElementById("loading").style.display = "flex";
    allQuizRef.limitToLast(items).once("value", (snapshot) => {
       const quizes = snapshot.val();
@@ -681,7 +683,16 @@ function doDynamic() {
             }, 500);
 
             quizesDiv.innerHTML += html;
+            addedItems++;
          }
+      }
+
+      // If there are no more quizes to load then hide the load more button
+
+      if (addedItems === 0) {
+         document.getElementById("quizContainer").innerHTML += ` <p>No more quizes to load</p>`;
+         document.getElementById("loading").style.display = "none";
+         document.getElementById("loadMore").classList.add("hidden");
       }
    });
 }
