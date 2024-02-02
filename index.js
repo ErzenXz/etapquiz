@@ -690,7 +690,7 @@ function doDynamic() {
       // If there are no more quizes to load then hide the load more button
 
       if (addedItems === 0) {
-         document.getElementById("quizContainer").innerHTML += ` <p>No more quizes to load</p>`;
+         toast("No more quizes to load");
          document.getElementById("loading").style.display = "none";
          document.getElementById("loadMore").classList.add("hidden");
       }
@@ -1131,8 +1131,6 @@ function showLeaderboard() {
 }
 
 function toast(message, duration = 4500, delay = 0) {
-   // Check for existing toast class elements
-
    const existingToast = document.querySelector(".toast");
 
    if (existingToast) {
@@ -1204,127 +1202,127 @@ function endQuiz() {
 }
 
 // // Security check, if the user changes tab then don't allow him answer the question
-// let warns = 0;
-// window.addEventListener("blur", () => {
-//    // Check if the user is enrolled in the quiz
-//    firebase
-//       .database()
-//       .ref("usersP/" + uid + "/")
-//       .child("enrolled")
-//       .once("value", (snapshot) => {
-//          const enrolled = snapshot.val();
+let warns = 0;
+window.addEventListener("blur", () => {
+   // Check if the user is enrolled in the quiz
+   firebase
+      .database()
+      .ref("usersP/" + uid + "/")
+      .child("enrolled")
+      .once("value", (snapshot) => {
+         const enrolled = snapshot.val();
 
-//          let enrolledInQuiz = false;
+         let enrolledInQuiz = false;
 
-//          for (let enrolledKey in enrolled) {
-//             if (enrolled[enrolledKey] === quizKey) {
-//                enrolledInQuiz = true;
-//             }
-//          }
+         for (let enrolledKey in enrolled) {
+            if (enrolled[enrolledKey] === quizKey) {
+               enrolledInQuiz = true;
+            }
+         }
 
-//          if (enrolledInQuiz && warns < 2) {
-//             toast("You are not allowed to change tabs");
-//             window.location.reload();
-//          }
-//       });
+         if (enrolledInQuiz && warns < 2) {
+            toast("You are not allowed to change tabs");
+            window.location.reload();
+         }
+      });
 
-//    // Check if the quiz is over
+   // Check if the quiz is over
 
-//    if (
-//       !quizOver &&
-//       warns < 2 &&
-//       document.getElementById("timer").innerText !== "Verifying..." &&
-//       tm1 > 0 &&
-//       document.getElementById("timer").innerText !== "The quiz has ended!" &&
-//       document.getElementById("quizBB").classList.contains("hidden") === false
-//    ) {
-//       warns++;
+   if (
+      !quizOver &&
+      warns < 2 &&
+      document.getElementById("timer").innerText !== "Verifying..." &&
+      tm1 > 0 &&
+      document.getElementById("timer").innerText !== "The quiz has ended!" &&
+      document.getElementById("quizBB").classList.contains("hidden") === false
+   ) {
+      warns++;
 
-//       switch (warns) {
-//          case 1:
-//             toast("You are not allowed to change tabs, if you do you will be disqualified!");
-//             break;
-//          case 2:
-//             toast("This is your last warning, if you change tabs you will be disqualified!");
-//             break;
-//          case 3:
-//             // Remove 700 points from the user's account
-//             firebase
-//                .database()
-//                .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard")
-//                .once("value", (snapshot) => {
-//                   const leaderboard = snapshot.val();
+      switch (warns) {
+         case 1:
+            toast("You are not allowed to change tabs, if you do you will be disqualified!");
+            break;
+         case 2:
+            toast("This is your last warning, if you change tabs you will be disqualified!");
+            break;
+         case 3:
+            // Remove 700 points from the user's account
+            firebase
+               .database()
+               .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard")
+               .once("value", (snapshot) => {
+                  const leaderboard = snapshot.val();
 
-//                   for (let leaderboardKey in leaderboard) {
-//                      const leaderboardObject = leaderboard[leaderboardKey];
+                  for (let leaderboardKey in leaderboard) {
+                     const leaderboardObject = leaderboard[leaderboardKey];
 
-//                      if (leaderboardObject.uid === uid) {
-//                         firebase
-//                            .database()
-//                            .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard/" + leaderboardKey)
-//                            .update({
-//                               points: Math.min(0, Number(leaderboardObject.points) - 700),
-//                            });
-//                      }
-//                   }
-//                });
-//             break;
-//          case 4:
-//             toast("You have been disqualified!");
-//             // Unenroll the user from the quiz
-//             firebase
-//                .database()
-//                .ref("usersP/" + uid + "/")
-//                .child("enrolled")
-//                .once("value", (snapshot) => {
-//                   const enrolled = snapshot.val();
+                     if (leaderboardObject.uid === uid) {
+                        firebase
+                           .database()
+                           .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard/" + leaderboardKey)
+                           .update({
+                              points: Math.min(0, Number(leaderboardObject.points) - 700),
+                           });
+                     }
+                  }
+               });
+            break;
+         case 4:
+            toast("You have been disqualified!");
+            // Unenroll the user from the quiz
+            firebase
+               .database()
+               .ref("usersP/" + uid + "/")
+               .child("enrolled")
+               .once("value", (snapshot) => {
+                  const enrolled = snapshot.val();
 
-//                   for (let enrolledKey in enrolled) {
-//                      if (enrolled[enrolledKey] === quizKey) {
-//                         firebase
-//                            .database()
-//                            .ref("usersP/" + uid + "/")
-//                            .child("enrolled")
-//                            .child(enrolledKey)
-//                            .remove();
-//                      }
-//                   }
-//                })
-//                .then(() => {
-//                   // Remove the user from the leaderboard
-//                   firebase
-//                      .database()
-//                      .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard")
-//                      .once("value", (snapshot) => {
-//                         const leaderboard = snapshot.val();
+                  for (let enrolledKey in enrolled) {
+                     if (enrolled[enrolledKey] === quizKey) {
+                        firebase
+                           .database()
+                           .ref("usersP/" + uid + "/")
+                           .child("enrolled")
+                           .child(enrolledKey)
+                           .remove();
+                     }
+                  }
+               })
+               .then(() => {
+                  // Remove the user from the leaderboard
+                  firebase
+                     .database()
+                     .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard")
+                     .once("value", (snapshot) => {
+                        const leaderboard = snapshot.val();
 
-//                         for (let leaderboardKey in leaderboard) {
-//                            const leaderboardObject = leaderboard[leaderboardKey];
+                        for (let leaderboardKey in leaderboard) {
+                           const leaderboardObject = leaderboard[leaderboardKey];
 
-//                            if (leaderboardObject.uid === uid) {
-//                               firebase
-//                                  .database()
-//                                  .ref(
-//                                     `quizesR/${quizType}/` +
-//                                        quizKey +
-//                                        "/leaderboard/" +
-//                                        leaderboardKey
-//                                  )
-//                                  .remove();
-//                            }
-//                         }
-//                      })
-//                      .then(() => {
-//                         window.location.reload();
-//                      });
-//                });
+                           if (leaderboardObject.uid === uid) {
+                              firebase
+                                 .database()
+                                 .ref(
+                                    `quizesR/${quizType}/` +
+                                       quizKey +
+                                       "/leaderboard/" +
+                                       leaderboardKey
+                                 )
+                                 .remove();
+                           }
+                        }
+                     })
+                     .then(() => {
+                        window.location.reload();
+                     });
+               });
 
-//             break;
-//          default:
-//             break;
-//       }
-//    }
-// });
+            break;
+         default:
+            break;
+      }
+   }
+});
 
 // Function to join a quiz with a code
 

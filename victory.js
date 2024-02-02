@@ -37,7 +37,7 @@ function victory(n) {
       top: 125px;
         left: 50%;
         transform: translateX(-50%);
-      z-index: 99999999999;
+      z-index: 99999999999999999;
     }
     
     .victory:after {
