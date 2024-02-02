@@ -971,3 +971,40 @@ footer {
 .hidden {
    display: none;
 }
+
+#ping {
+   position: fixed;
+   bottom: 20px;
+   left: 20px;
+   background-color: var(--primary);
+   color: var(--text);
+   border: 1px solid var(--border2);
+   width: 90px;
+   height: 30px;
+   font-size: 12px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   cursor: pointer;
+   transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms;
+   z-index: 9999999999;
+}
+
+#ping:hover {
+   background-color: var(--secondary);
+}
+
+.redWIFI {
+   color: #FF4136;
+   margin-right: 10px;
+}
+
+.greenWIFI {
+   color: #2ECC40;
+   margin-right: 10px;
+}
+
+.yellowWIFI {
+   color: #FFDC00;
+   margin-right: 10px;
+}

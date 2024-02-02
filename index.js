@@ -326,22 +326,101 @@ let timeDiff = 0;
 
 let api = "https://worldtimeapi.org/api/timezone/Europe/Belgrade";
 
-function syncTime() {
-   fetch(api)
-      .then((response) => {
-         return response.json();
-      })
-      .then((data) => {
-         timeNOW = data.unixtime * 1000;
-         timeDiff = timeNOW - new Date().getTime();
-      });
+async function syncUserTimeToRealTime() {
+   try {
+      const clientRequestTime = new Date();
+
+      const requestStartTime = performance.now();
+      const response = await fetch(
+         `${api}?clientRequestTime=${encodeURIComponent(clientRequestTime.toISOString())}`
+      );
+      const requestEndTime = performance.now();
+
+      if (!response.ok) {
+         throw new Error("Failed to fetch time from the API");
+      }
+
+      const data = await response.json();
+
+      const requestTime = requestEndTime - requestStartTime;
+
+      const serverClientDifferenceTimeWithRequestTime =
+         new Date(data.utc_datetime) - new Date(data.clientRequestTime);
+      const serverTime = new Date(data.utc_datetime);
+
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      const responseTime = requestEndTime - requestStartTime;
+
+      const synchronizedTimeOnClient = new Date(serverTime.getTime() + responseTime / 2);
+
+      const timeDifference = clientRequestTime - serverTime;
+
+      // console.log("Time difference:", timeDifference);
+
+      // // Log whether the client is ahead or behind the server
+      // if (timeDifference > 100) {
+      //    console.log(
+      //       `Your time is ${Math.abs(timeDifference / 1000).toFixed(
+      //          1
+      //       )} seconds ahead of the server.`
+      //    );
+
+      //    console.log(
+      //       `It has been adjusted to ${(synchronizedTimeOnClient - serverTime) / 1000} seconds.`
+      //    );
+      // } else if (timeDifference < -100) {
+      //    console.log(
+      //       `Your time is ${Math.abs(timeDifference / 1000).toFixed(1)} seconds behind the server.`
+      //    );
+      //    console.log(
+      //       `It has been adjusted to ${(synchronizedTimeOnClient - serverTime) / 1000} seconds.`
+      //    );
+      // } else {
+      //    console.log("Your time is synchronized with the server.");
+      // }
+
+      let ping = responseTime.toFixed(2);
+      let pingSTR;
+
+      if (ping > 500) {
+         pingSTR = `<i class="fa-solid fa-wifi redWIFI"></i> <span>${ping}ms</span>`;
+      } else if (ping > 200) {
+         pingSTR = `<i class="fa-solid fa-wifi yellowWIFI"></i> <span>${ping}ms</span>`;
+      } else {
+         pingSTR = `<i class="fa-solid fa-wifi greenWIFI"></i> <span>${ping}ms</span>`;
+      }
+
+      document.getElementById("ping").innerHTML = pingSTR;
+
+      return synchronizedTimeOnClient.getTime();
+   } catch (error) {
+      console.error("Error syncing time:", error.message);
+      return null;
+   }
 }
 
-setInterval(() => {
-   syncTime();
-}, 1000);
+// function syncTime() {
+//    fetch(api)
+//       .then((response) => {
+//          return response.json();
+//       })
+//       .then((data) => {
+//          timeNOW = data.unixtime * 1000;
+//          timeDiff = timeNOW - new Date().getTime();
+//       });
+//    return timeNOW;
+// }
 
-syncTime();
+setInterval(() => {
+   syncUserTimeToRealTime().then((timestamp) => {
+      if (timestamp !== null) {
+         timeNOW = timestamp;
+      } else {
+         console.log("Failed to sync user time to real time.");
+      }
+   });
+}, 1000);
 
 setInterval(() => {
    timeNOW = new Date().getTime() + timeDiff;
