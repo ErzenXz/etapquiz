@@ -380,7 +380,7 @@ async function syncUserTimeToRealTime() {
       //    console.log("Your time is synchronized with the server.");
       // }
 
-      let ping = responseTime.toFixed(2);
+      let ping = removeTags(responseTime.toFixed(2));
       let pingSTR;
 
       if (ping > 500) {
@@ -430,14 +430,14 @@ function loadAllQuizes() {
    allQuizRef.limitToLast(items).on("child_added", (snapshot) => {
       const quizes = snapshot.val();
 
-      const quizKey = snapshot.key;
+      const quizKey = removeTags(snapshot.key);
 
       const quizesDiv = document.getElementById("quizContainer");
 
       let quizObject = quizes;
 
       const quizSTARTTIME = new Date(quizObject.time).getTime();
-      const timeperQuestion = quizObject.answerTime * 1000;
+      const timeperQuestion = removeTags(quizObject.answerTime) * 1000;
       const totalQuestions = quizObject.questions.length;
 
       const quizENDTIME =
@@ -485,14 +485,14 @@ function loadAllQuizes() {
       let html = `
             <div class="quiz" onclick="loadQuiz('${quizKey}')">
             <div class="quiz-title">
-            <h3>${quizObject.name}</h3>
+            <h3>${removeTags(quizObject.name)}</h3>
             </div>
-               <p class="quiz-desc">${quizObject.description}</p>
+               <p class="quiz-desc">${removeTags(quizObject.description)}</p>
                <div class="quiz-info">
-               <p>Reward: ${quizObject.reward}</p>
-               <p id="quizTime${quizKey}">${formattedTime}</p>
+               <p>Reward: ${removeTags(quizObject.reward)}</p>
+               <p id="quizTime${quizKey}">${removeTags(formattedTime)}</p>
                </div>
-               <img src="${randomImage}" alt="Theme" width="250" height="300">
+               <img src="${removeTags(randomImage)}" alt="Theme" width="250" height="300">
             </div>
 
          `;
@@ -538,7 +538,7 @@ function loadAllQuizes() {
                   formattedTime = "Started";
                }
 
-               quizTime.innerHTML = formattedTime;
+               quizTime.innerHTML = removeTags(formattedTime);
             }
          }, 500);
 
@@ -566,8 +566,8 @@ function doDynamic() {
          let quizObject = quizes[quizKey];
 
          const quizSTARTTIME = new Date(quizObject.time).getTime();
-         const timeperQuestion = quizObject.answerTime * 1000;
-         const totalQuestions = quizObject.questions.length;
+         const timeperQuestion = removeTags(quizObject.answerTime) * 1000;
+         const totalQuestions = removeTags(quizObject.questions.length);
 
          const quizENDTIME =
             quizSTARTTIME + (timeperQuestion + waitTimeBetweenQuestions) * totalQuestions;
@@ -612,7 +612,7 @@ function doDynamic() {
          let imagesToAdd = 18;
 
          for (let i = 0; i < imagesToAdd; i++) {
-            images.push("./images/image (Small)" + (i + 1) + ".jpg");
+            images.push("./images/image" + (i + 1) + "S.jpg");
          }
 
          let randomImage = images[Math.floor(Math.random() * images.length)];
@@ -620,12 +620,12 @@ function doDynamic() {
          let html = `
             <div class="quiz" onclick="loadQuiz('${quizKey}')">
             <div class="quiz-title">
-            <h3>${quizObject.name}</h3>
+            <h3>${removeTags(quizObject.name)}</h3>
             </div>
-               <p class="quiz-desc">${quizObject.description}</p>
+               <p class="quiz-desc">${removeTags(quizObject.description)}</p>
                <div class="quiz-info">
-               <p>Reward: ${quizObject.reward}</p>
-               <p id="quizTime${quizKey}">${formattedTime}</p>
+               <p>Reward: ${removeTags(quizObject.reward)}</p>
+               <p id="quizTime${quizKey}">${removeTags(formattedTime)}</p>
                </div>
                <img src="${randomImage}" alt="Theme" width="250" height="300">
             </div>
@@ -678,7 +678,7 @@ function doDynamic() {
                      formattedTime = "Started";
                   }
 
-                  quizTime.innerHTML = formattedTime;
+                  quizTime.innerHTML = removeTags(formattedTime);
                }
             }, 500);
 
@@ -807,9 +807,9 @@ function loadQuizPage(qD) {
       const quizDescription = document.getElementById("quizDescription");
       const quizReward = document.getElementById("quizReward1");
 
-      quizTitle.innerHTML = quizData.name;
-      quizDescription.innerHTML = quizData.description;
-      quizReward.innerHTML = quizData.reward;
+      quizTitle.innerText = quizData.name;
+      quizDescription.innerText = quizData.description;
+      quizReward.innerText = quizData.reward;
 
       quizKey = KEY;
       pointsQ = quizData.pointsPerQuestion;
@@ -909,15 +909,15 @@ function showQuestion(question, pointsPerQuestion, answerTime, quizKey, nextQues
    // let timeRemaining = answerTime;
 
    const timer = document.getElementById("timer");
-   timer.innerHTML = timeRemaining + "s";
+   timer.innerText = timeRemaining + "s";
 
    const timerInterval = setInterval(() => {
       timeRemaining--;
       tm1 = timeRemaining;
-      timer.innerHTML = timeRemaining + "s";
+      timer.innerText = timeRemaining + "s";
 
       if (timeRemaining <= 0) {
-         timer.innerHTML = "Verifying...";
+         timer.innerText = "Verifying...";
          showLeaderboard();
          clearInterval(timerInterval);
       }
@@ -1090,7 +1090,7 @@ function checkAnswer(i) {
 function showLeaderboard() {
    const leaderboardD = document.getElementById("leaderboardList");
 
-   leaderboardD.innerHTML = "";
+   leaderboardD.innerText = "";
 
    const leaderboardRef = firebase.database().ref("quizesR/public/" + quizKey + "/leaderboard");
 
@@ -1099,7 +1099,7 @@ function showLeaderboard() {
 
       let key = snapshot.key;
 
-      leaderboardD.innerHTML = "";
+      leaderboardD.innerText = "";
 
       // Convert leaderboard object to an array
       const leaderboardArray = Object.entries(leaderboard);
@@ -1114,12 +1114,12 @@ function showLeaderboard() {
          leaderboardDiv.className = "leaderboardItem";
 
          const leaderboardName = document.createElement("p");
-         leaderboardName.innerHTML = leaderboardObject.fullname;
+         leaderboardName.innerText = leaderboardObject.fullname;
          leaderboardName.title = leaderboardObject.username;
          leaderboardName.className = "leaderboardItem__name";
 
          const leaderboardPoints = document.createElement("p");
-         leaderboardPoints.innerHTML = leaderboardObject.points;
+         leaderboardPoints.innerText = leaderboardObject.points;
          leaderboardPoints.className = "leaderboardItem__points";
 
          leaderboardDiv.appendChild(leaderboardName);
@@ -1219,34 +1219,29 @@ window.addEventListener("blur", () => {
                enrolledInQuiz = true;
             }
          }
-
-         if (enrolledInQuiz && warns < 2) {
-            toast("You are not allowed to change tabs");
-            window.location.reload();
-         }
       });
 
    // Check if the quiz is over
 
    if (
       !quizOver &&
-      warns < 2 &&
       document.getElementById("timer").innerText !== "Verifying..." &&
       tm1 > 0 &&
       document.getElementById("timer").innerText !== "The quiz has ended!" &&
       document.getElementById("quizBB").classList.contains("hidden") === false
    ) {
       warns++;
-
+      console.log(warns);
       switch (warns) {
          case 1:
-            toast("You are not allowed to change tabs, if you do you will be disqualified!");
+            alert("You are not allowed to change tabs, if you do you will be disqualified!");
             break;
          case 2:
-            toast("This is your last warning, if you change tabs you will be disqualified!");
+            alert("This is your last warning, if you change tabs you will be disqualified!");
             break;
          case 3:
             // Remove 700 points from the user's account
+            alert("You have lost 700 points for changing tabs!");
             firebase
                .database()
                .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard")
@@ -1261,14 +1256,14 @@ window.addEventListener("blur", () => {
                            .database()
                            .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard/" + leaderboardKey)
                            .update({
-                              points: Math.min(0, Number(leaderboardObject.points) - 700),
+                              points: Math.max(0, Number(leaderboardObject.points) - 700),
                            });
                      }
                   }
                });
             break;
          case 4:
-            toast("You have been disqualified!");
+            alert("You have been disqualified! ");
             // Unenroll the user from the quiz
             firebase
                .database()
@@ -1323,6 +1318,12 @@ window.addEventListener("blur", () => {
       }
    }
 });
+
+function removeTags(str) {
+   if (str === null || str === "") return false;
+   else str = str.toString();
+   return str.replace(/(<([^>]+)>)/gi, "");
+}
 
 // Function to join a quiz with a code
 
@@ -1511,7 +1512,7 @@ function loadQuizPr(code) {
                   }
 
                   if (enrolledInQuiz) {
-                     toast("The quiz has not started yet");
+                     toast("The quiz has not started yet, you will need to join when it starts");
                   } else {
                      // Enroll the user in the quiz
                      firebase
@@ -1568,9 +1569,9 @@ function loadQuizPagePr(code) {
          const quizDescription = document.getElementById("quizDescription");
          const quizReward = document.getElementById("quizReward1");
 
-         quizTitle.innerHTML = quizData.name;
-         quizDescription.innerHTML = quizData.description;
-         quizReward.innerHTML = quizData.reward;
+         quizTitle.innerText = quizData.name;
+         quizDescription.innerText = quizData.description;
+         quizReward.innerText = quizData.reward;
 
          quizKey = KEY;
          pointsQ = quizData.pointsPerQuestion;
