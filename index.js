@@ -1263,7 +1263,7 @@ window.addEventListener("blur", () => {
                });
             break;
          case 4:
-            alert("You have been disqualified!");
+            alert("You have been disqualified! ");
             // Unenroll the user from the quiz
             firebase
                .database()
@@ -1512,7 +1512,7 @@ function loadQuizPr(code) {
                   }
 
                   if (enrolledInQuiz) {
-                     toast("The quiz has not started yet");
+                     toast("The quiz has not started yet, you will need to join when it starts");
                   } else {
                      // Enroll the user in the quiz
                      firebase
