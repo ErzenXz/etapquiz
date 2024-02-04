@@ -223,9 +223,39 @@ body {
    text-decoration: none;
    font-size: 1rem;
    font-weight: 500;
-   transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms;
    padding: 10px 15px;
+   background-color: transparent;
+   border: none;
+   display: flex;
+   position: relative;
+   gap: 5px;
+   cursor: pointer;
+   border-radius: 4px;
+   transition: all 0.2s ease;
 }
+
+.nav__links a::before {
+   content: "";
+   position: absolute;
+   top:35px;
+   right: 0px;
+   width: 100%;
+   height: 3px;
+   background-color: #2f81f7;
+   border-radius: 5px;
+   opacity: 0;
+ }
+
+.nav__links a:hover::before {
+   opacity: 1;
+}
+
+.nav__links a.active::before {
+   opacity: 1;
+}
+
+
+ 
 
 .nav__links a:hover {
    color: var(--text-sel);
@@ -1048,4 +1078,89 @@ footer {
 .yellowWIFI {
    color: #FFDC00;
    margin-right: 10px;
+}
+
+.profile {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: 20px;
+   flex-wrap: wrap;
+
+   background-color: var(--secondary);
+   border-radius: 12px;
+   padding: 20px;
+   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+   border: 1px solid var(--border);
+   width: 100%;
+   min-height: 50vh;
+   height: fit-content;
+}
+
+.profile .it {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   width: 45%;
+   height: 100%;
+}
+
+.it .profile__info {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   width: 100%;
+
+}
+
+.profile__info__item {
+   display: flex;
+   flex-direction: row;
+   gap: 10px;
+   width: 100%;
+   background-color: var(--primary);
+   padding: 10px 15px;
+   border-radius: 5px;
+   border: 1px solid var(--border2);
+
+}
+
+.profile__buttons {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   width: 100%;
+   height: 100%;
+}
+
+.profile__buttons button {
+   background-color: var(--primary);
+   color: var(--text);
+   border: 1px solid var(--border2);
+   border-radius: 5px;
+   padding: 10px 15px;
+   font-size: 1rem;
+   font-weight: 500;
+   transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms;
+   cursor: pointer;
+   width: 50%;
+   margin: 0 auto;
+}
+
+.profile__buttons button:hover {
+   background-color: var(--btn2);
+}
+
+.profile__info__item img {
+   width: 100%;
+   height: 50%;
+   object-fit: cover;
+}
+
+
+@media screen and (max-width: 1300px) {
+   .profile .it {
+      width: 100%;
+   }
+   
 }
