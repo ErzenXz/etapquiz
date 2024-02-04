@@ -5,7 +5,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>eTapQuiz</title>
 
-      <link rel="stylesheet" href="style.css" />
+      <link rel="stylesheet" href="../style.css" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
       <link
@@ -21,6 +21,14 @@
          referrerpolicy="no-referrer"
       ></script>
 
+      <script
+         defer
+         src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-firestore.min.js"
+         integrity="sha512-95HhZKEWw0vxywbO/5CJhf+KJqEDEmXGDeys3ylTMTuW50ccC26GcV7pPhTiYC8fH3jj0i4AwxRdIN5vfoLqmg=="
+         crossorigin="anonymous"
+         referrerpolicy="no-referrer"
+      ></script>
+
       <script defer src="https://kit.fontawesome.com/f45cd9c28c.js"></script>
       <div id="victoryAA"></div>
    </head>
@@ -28,11 +36,11 @@
       <div class="nav" id="nav2">
          <div class="nav__logo">eTapQuiz</div>
          <div class="nav__links" id="navLinks">
-            <a href="index.html">Home</a>
+            <a href="../index.html">Home</a>
             <a href="#join" onclick="joinQuizCode()">Join</a>
             <!-- <a href="leaderboard.html">Leaderboard</a> -->
-            <a href="about.html" class="active">About</a>
-            <a href="account/profile.html">Account</a>
+            <a href="../about.html">About</a>
+            <a href="../account/profile.html" class="active">Account</a>
          </div>
          <div class="nav__auth" id="navAuth">
             <span id="theme-switcher"><i class="fa-solid fa-moon"></i></span>
@@ -48,52 +56,46 @@
       </div>
 
       <main>
-         <section class="about-section">
-            <h1>About eTapQuiz</h1>
-            <p>
-               eTapQuiz is a quiz app inspired by Kahoot. It allows users to create and participate
-               in interactive quizzes. With a user-friendly interface and engaging features,
-               eTapQuiz makes learning fun and interactive.
-            </p>
-            <p>
-               Whether you are a student looking to test your knowledge or a teacher wanting to
-               create educational quizzes, eTapQuiz has got you covered. Create your own quizzes or
-               explore a wide range of quizzes created by other users.
-            </p>
-            <p>
-               eTapQuiz offers a variety of question types, including multiple choice, true/false,
-               and open-ended questions. It also provides real-time feedback and a leaderboard to
-               track your progress and compete with others.
-            </p>
-            <p>Join the eTapQuiz community today and start quizzing!</p>
-         </section>
+         <div class="profile">
+            <div class="it">
+               <h3>Profile</h3>
+               <div class="profile__info">
+                  <div class="profile__info__item">
+                     <img id="profileImage" src="" alt="Profile Image" />
+                  </div>
 
-         <section class="features-section">
-            <h2>Key Features</h2>
-            <ul>
-               <li>Interactive quizzes</li>
-               <li>Various question types</li>
-               <li>Real-time feedback</li>
-               <li>Leaderboard</li>
-               <li>User-friendly interface</li>
-               <li>Customizable quizzes</li>
-               <li>Engaging learning experience</li>
-            </ul>
-         </section>
-
-         <section class="how-to-section">
-            <h2>How to Use eTapQuiz</h2>
-            <ol>
-               <li>Create an account or log in to your existing account.</li>
-               <li>Explore the available quizzes or create your own.</li>
-               <li>Join a quiz by entering the quiz code or participate in a public quiz.</li>
-               <li>Answer the quiz questions within the given time limit.</li>
-               <li>Receive instant feedback on your answers.</li>
-               <li>Check the leaderboard to see how you rank against other participants.</li>
-               <li>Review your quiz results and track your progress.</li>
-               <li>Share your quiz scores with friends and challenge them to beat your score.</li>
-            </ol>
-         </section>
+                  <div class="profile__info__item">
+                     <p>Email:</p>
+                     <p id="email"></p>
+                  </div>
+                  <div class="profile__info__item">
+                     <p>Full Name:</p>
+                     <p id="fullname"></p>
+                  </div>
+                  <div class="profile__info__item">
+                     <p>Username:</p>
+                     <p id="username"></p>
+                  </div>
+                  <div class="profile__info__item">
+                     <p>UID:</p>
+                     <p id="uid"></p>
+                  </div>
+                  <div class="profile__info__item">
+                     <p>Last login:</p>
+                     <p id="lastLogin"></p>
+                  </div>
+               </div>
+            </div>
+            <div class="it">
+               <div class="profile__buttons">
+                  <button onclick="changeUsername()">Change Username</button>
+                  <button onclick="changeImage()">Change Image</button>
+                  <button onclick="changeFullName()">Change Full Name</button>
+                  <button onclick="changePassword()">Change Password</button>
+                  <button onclick="deleteAccount()">Delete Account</button>
+               </div>
+            </div>
+         </div>
       </main>
 
       <footer>
@@ -151,7 +153,6 @@
             background-color: var(--primary);
             padding: 40px;
             border-radius: 10px;
-            border: 1px solid var(--border);
          }
       </style>
 
@@ -182,7 +183,8 @@
          });
       </script>
 
-      <script src="theme.js"></script>
-      <script src="authcheck.js" defer></script>
+      <script src="profile.js" defer></script>
+      <script src="../theme.js"></script>
+      <script src="../authcheck.js" defer></script>
    </body>
 </html>

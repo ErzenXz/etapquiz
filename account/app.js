@@ -168,10 +168,10 @@ async function login() {
             });
       })
       .catch(function (error) {
-         var errorCode = error.code;
-         var errorMessage = error.message;
+         var parsedError = JSON.parse(JSON.stringify(error));
+         var errorCode = parsedError.code;
+         var errorMessage = parsedError.message;
          toast(errorMessage, 8000);
-         console.log(error);
       });
 }
 
