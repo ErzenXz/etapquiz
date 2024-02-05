@@ -34,6 +34,11 @@ Welcome to eTapQuiz, an online quiz application where users can create quizzes, 
   - Ensure you have a Firebase account. If not, you can [sign up for Firebase](https://firebase.google.com/).
   - Create a Firestore database for storing user data.
   - Set up a Realtime Database for additional real-time functionality.
+  - Enable Firebase Authentication with methods such as email/password.
+    - Go to the [Firebase Console](https://console.firebase.google.com/).
+    - Select your project.
+    - Navigate to "Authentication" in the left sidebar.
+    - Under the "Sign-in method" tab, enable the desired authentication methods (e.g., Email/Password).
 
 
 ### Installation
@@ -41,7 +46,7 @@ Welcome to eTapQuiz, an online quiz application where users can create quizzes, 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/eTapQuiz.git
+   git clone https://github.com/ErzenXz/etapquiz.git
    ```
 
 2. Navigate to the project directory:
@@ -50,24 +55,35 @@ Welcome to eTapQuiz, an online quiz application where users can create quizzes, 
 cd eTapQuiz
 ```
 
-3. Change Firebase credentials to your own:
+3. Update Firebase Credentials:
 
-```html
-<script>
+   In order to connect your web application to Firebase services, you'll need to replace the placeholder values in the following script with your own Firebase credentials. Here's how to obtain these credentials:
 
-         const firebaseConfig = {
-            apiKey: "",
-            authDomain: "",
-            databaseURL: "",
-            projectId: "",
-            storageBucket: "",
-            messagingSenderId: "",
-            appId: "",
-            measurementId: "",
-         };
-         firebase.initializeApp(firebaseConfig);
-      </script>
-```
+   - Go to the [Firebase Console](https://console.firebase.google.com/).
+   - Select your project or create a new one.
+   - Navigate to "Project settings" (click on the gear icon in the top left).
+   - Under the "General" tab, find the "Your apps" section and click on the Firebase web app icon (`</>`).
+   - Copy the configuration object (`apiKey`, `authDomain`, `databaseURL`, `projectId`, `storageBucket`, `messagingSenderId`, `appId`, `measurementId`).
+
+   Now, replace the placeholder values in your HTML script with the corresponding values from your Firebase project:
+
+   ```html
+   <script>
+      const firebaseConfig = {
+         apiKey: "YOUR_API_KEY",
+         authDomain: "YOUR_AUTH_DOMAIN",
+         databaseURL: "YOUR_DATABASE_URL",
+         projectId: "YOUR_PROJECT_ID",
+         storageBucket: "YOUR_STORAGE_BUCKET",
+         messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+         appId: "YOUR_APP_ID",
+         measurementId: "YOUR_MEASUREMENT_ID",
+      };
+      firebase.initializeApp(firebaseConfig);
+   </script> ```
+   
+Ensure to replace each placeholder (YOUR_API_KEY, YOUR_AUTH_DOMAIN, etc.) with the corresponding values copied from your Firebase project settings.
+
 
 4. Start the application:
 
