@@ -8,6 +8,6 @@ firebase.auth().onAuthStateChanged((user) => {
       // ...
    } else {
       console.log("User is not logged in!");
-      location.href = "/account/index.html";
+      location.href = "../account/index.html";
    }
 });
