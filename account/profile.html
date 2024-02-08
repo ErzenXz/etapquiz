@@ -3,7 +3,7 @@
    <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>eTapQuiz</title>
+      <title>eTapQuiz • Account</title>
 
       <link rel="stylesheet" href="../style.css" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -33,14 +33,17 @@
       <div id="victoryAA"></div>
    </head>
    <body>
+      <div class="loading-screen" id="loading">
+         <div class="loading-spinner"></div>
+      </div>
       <div class="nav" id="nav2">
          <div class="nav__logo">eTapQuiz</div>
          <div class="nav__links" id="navLinks">
             <a href="../index.html">Home</a>
-            <a href="#join" onclick="joinQuizCode()">Join</a>
-            <!-- <a href="leaderboard.html">Leaderboard</a> -->
+            <a href="../browse.html">Explore</a>
+            <a href="../create.html">Create</a>
             <a href="../about.html">About</a>
-            <a href="../account/profile.html" class="active">Account</a>
+            <a href="profile.html" class="active">Account</a>
          </div>
          <div class="nav__auth" id="navAuth">
             <span id="theme-switcher"><i class="fa-solid fa-moon"></i></span>

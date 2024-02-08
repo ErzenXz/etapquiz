@@ -3,12 +3,16 @@
    <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>eTapQuiz</title>
+      <title>eTapQuiz • Home</title>
 
       <link rel="stylesheet" href="style.css" />
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Lato&family=Press+Start+2P&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="index.css" />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link
+         href="https://fonts.googleapis.com/css2?family=Lato&family=Press+Start+2P&display=swap"
+         rel="stylesheet"
+      />
 
       <script
          defer
@@ -25,136 +29,48 @@
          crossorigin="anonymous"
          referrerpolicy="no-referrer"
       ></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-database.min.js" integrity="sha512-XDKFSZOhFNmwmx69Xr0j3zmePQ3NoSgpzZPr49P6oV7ME5ZhEXUqu+KUA0vQtof87P6IX+ycg4PmSms/EF8/pw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <script
+         src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-database.js"
+         defer
+      ></script>
 
       <script defer src="https://kit.fontawesome.com/f45cd9c28c.js"></script>
       <div id="victoryAA"></div>
-
    </head>
    <body>
       <div class="nav" id="nav2">
-         <div class="nav__logo">
-             eTapQuiz
-         </div>
+         <div class="nav__logo">eTapQuiz</div>
          <div class="nav__links" id="navLinks">
-             <a href="index.html" class="active">Home</a>
-             <a href="#join" onclick="joinQuizCode()">Join</a>
-             <!-- <a href="leaderboard.html">Leaderboard</a> -->
-             <a href="about.html">About</a>
-             <a href="account/profile.html">Account</a>
+            <a href="index.html" class="active">Home</a>
+            <a href="browse.html">Explore</a>
+            <a href="create.html">Create</a>
+            <a href="about.html">About</a>
+            <a href="account/profile.html">Account</a>
          </div>
          <div class="nav__auth" id="navAuth">
-
-             <span id="theme-switcher"><i class="fa-solid fa-moon"></i></span>
-             <span id="logout" onclick="logOut()"><i class="fa-solid fa-right-from-bracket"></i></span>
+            <span id="theme-switcher"><i class="fa-solid fa-moon"></i></span>
+            <span id="logout" onclick="logOut()"
+               ><i class="fa-solid fa-right-from-bracket"></i
+            ></span>
          </div>
          <div class="nav__burger" onclick="toggleMenu()">
-             <div class="burger-line"></div>
-             <div class="burger-line"></div>
-             <div class="burger-line"></div>
-         </div>
-     </div>
-     
-
-      <div id="createQuiz" class="hidden">
-         <br>
-         <div class="top2">
-            <h2>Create Quiz</h2>
-
-            <div id="close" onclick="closeADD()">
-               <i class="fa-solid fa-xmark"></i>
-            </div>
-         </div>
-         <br>
-         <input type="text" name="title" id="qtitle" placeholder="Quiz title" />
-         <input type="text" name="description" id="qdescription" placeholder="Quiz description" />
-
-         <div class="visib">
-            <input type="radio" id="public" name="quizType" value="public" />
-            <label for="public">Public</label>
-            <input type="radio" id="private" name="quizType" value="private" />
-            <label for="private">Private</label>
-         </div>
-         <input type="text" name="quizReward" id="quizReward" placeholder="Quiz reward" />
-
-         <input type="datetime-local" name="quizTime" id="quizTime" placeholder="Quiz start time" />
-
-         <input
-            type="number"
-            min="100"
-            max="9999"
-            name="quizTimeLimit"
-            id="quizPoints"
-            placeholder="Quiz points per question"
-         />
-
-         <input
-            type="number"
-            min="2"
-            max="9999"
-            name="quizTimeLimit"
-            id="quizAnswerTime"
-            placeholder="Time per question (seconds)"
-         />
-
-         <div id="questions"></div>
-
-         <label for="importFile">Import Quiz</label>
-         <input type="file" accept="json" id="importFile" onclick="importFile()"></input>
-
-         <div class="btns">
-            <button id="addQuestion" onclick="addQuestion()">Add question</button>
-            <button id="create" onclick="createQuiz()">Create</button>
-
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
          </div>
       </div>
 
-      <div class="loading-screen" id="loading">
-         <div class="loading-spinner"></div>
-         </div>
-
-      <h1 class="h3text" id="h3">Public Quizes</h1>
-      <div id="quizContainer"></div>
-
-      <button id="loadMore" onclick="doDynamic()">Load More</button>
-
-      <div id="addQuizBtn" onclick="showAddQuiz()"><i class="fa-solid fa-plus"></i></div>
-
-      <div id="quizBB" class="hidden">
-         <div id="quizINFO">
-            <span id="quizTitle"></span>
-            <span id="quizDescription">
-
-            </span>
-            <span id="quizReward1">1</span>
-         </div>
-
-         <div id="quiz">
-            <div id="mainA">
-               <div id="question">
-                  <div id="questionText"></div>
-               </div>
-               <div id="answers">
-                  <div id="answer1" class="answer" onclick="checkAnswer(1)">
-
-                  </div>
-                  <div id="answer2" class="answer" onclick="checkAnswer(2)">
-                  </div>
-                  <div id="answer3" class="answer" onclick="checkAnswer(3)">4</div>
-                  <div id="answer4" class="answer" onclick="checkAnswer(4)">
-
-                  </div>
-               </div>
-               <div id="timer">
-                  <div id="timerBar"></div>
-               </div>
-            </div>
-            <div id="leaderboard">
-               <p id="leaderboardTitle">Leaderboard</p>
-               <div id="leaderboardList"></div>
-            </div>
-         </div>
+      <div>
+         <div class="wave"></div>
+         <div class="wave"></div>
+         <div class="wave"></div>
       </div>
+
+      <main>
+         <h1>Welcome to eTapQuiz</h1>
+         <p>Test your knowledge with our quizzes or create your own!</p>
+         <a href="browse.html">Start Learning</a>
+      </main>
 
       <footer id="footer">
          <p>Copyright 2024 - Erzen Krasniqi</p>
@@ -184,27 +100,104 @@
          firebase.initializeApp(firebaseConfig);
       </script>
 
+      <script>
+         function logOut() {
+            let conf = confirm("Are you sure you want to log out?");
 
+            if (!conf) {
+               return;
+            }
 
-<div id="victoryS">
-   <div class="victory"></div>
-   <div class="imposter">
-     <div class="spacesuit">
-       <div class="chest-and-head"></div>
-       <div class="legs"></div>
-       <div class="arm"></div>
-       <div class="helmet-glass"></div>
-     </div>
-   </div>
-   <div class="background"></div>
-   <div class="name"></div>
-</div>
+            toast("Logging out...");
+            firebase
+               .auth()
+               .signOut()
+               .then(() => {
+                  window.location.href = "./account/index.html";
+               })
+               .catch((error) => {
+                  toast(error.message);
+               });
+         }
 
-<div id="ping">Connecting...</div>
+         // Function to toggle the menu
+         function toggleMenu() {
+            const navLinks = document.getElementById("navLinks");
+            const navAuth = document.getElementById("navAuth");
+            const navBurger = document.querySelector(".nav__burger");
 
-   <script src="theme.js"></script>
+            navLinks.classList.toggle("show");
+            navAuth.classList.toggle("show");
+            navBurger.classList.toggle("active");
+         }
+
+         // Close the menu when a link is clicked
+         const navLinks = document.querySelectorAll(".nav__links a");
+         navLinks.forEach((link) => {
+            link.addEventListener("click", () => {
+               const navLinks = document.getElementById("navLinks");
+               const navAuth = document.getElementById("navAuth");
+               const navBurger = document.querySelector(".nav__burger");
+
+               navLinks.classList.remove("show");
+               navAuth.classList.remove("show");
+               navBurger.classList.remove("active");
+            });
+         });
+
+         function toast(message, duration = 4500, delay = 0) {
+            const existingToast = document.querySelector(".toast");
+
+            if (existingToast) {
+               existingToast.remove();
+            }
+
+            const toastContainer = document.createElement("div");
+            toastContainer.style.position = "fixed";
+            toastContainer.style.top = "1rem";
+            toastContainer.style.right = "1rem";
+            toastContainer.style.display = "flex";
+            toastContainer.style.alignItems = "center";
+            toastContainer.style.justifyContent = "center";
+            toastContainer.style.width = "16rem";
+            toastContainer.style.padding = "1rem";
+            toastContainer.style.backgroundColor = "#1F2937";
+            toastContainer.style.color = "#FFF";
+            toastContainer.style.borderRadius = "0.25rem";
+            toastContainer.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.25)";
+            toastContainer.style.overflow = "auto";
+            toastContainer.style.maxHeight = "500px";
+            toastContainer.style.minWidth = "200px";
+            toastContainer.style.width = "fit-content";
+            toastContainer.style.zIndex = "9999";
+            toastContainer.setAttribute("class", "toast");
+
+            const toastText = document.createElement("span");
+            toastText.style.whiteSpace = "nowrap";
+            toastText.style.overflow = "hidden";
+            toastText.style.textOverflow = "ellipsis";
+            toastText.textContent = message;
+            toastContainer.appendChild(toastText);
+
+            document.body.appendChild(toastContainer);
+
+            setTimeout(() => {
+               toastContainer.style.opacity = "0";
+               setTimeout(() => {
+                  toastContainer.remove();
+               }, 300);
+            }, duration + delay);
+
+            toast.dismiss = function () {
+               toastContainer.style.opacity = "0";
+               setTimeout(() => {
+                  toastContainer.remove();
+               }, 300);
+            };
+         }
+      </script>
+
+      <script src="theme.js"></script>
       <script src="authcheck.js" defer></script>
-      <script src="index.js" defer></script>
-      <script src="victory.js" defer></script>
    </body>
 </html>

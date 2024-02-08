@@ -260,6 +260,7 @@ function victory(n) {
    document.getElementById("loadMore").classList.add("hidden");
    document.getElementById("ping").classList.add("hidden");
    document.getElementById("h3").classList.add("hidden");
+   document.getElementById("top5").classList.add("hidden");
    //    document.body.appendChild(style);
 
    setTimeout(() => {
@@ -272,5 +273,6 @@ function victory(n) {
       document.getElementById("loadMore").classList.remove("hidden");
       document.getElementById("ping").classList.remove("hidden");
       document.getElementById("h3").classList.remove("hidden");
+      document.getElementById("top5").classList.remove("hidden");
    }, 10000);
 }
