@@ -2,6 +2,7 @@ const user = firebase.auth().currentUser;
 const database = firebase.database();
 const firestore = firebase.firestore();
 let waitTimeBetweenQuestions = 5000; // 5 seconds
+let autoJoinQuizKey = null;
 
 let uid = user ? user.uid : null;
 
@@ -39,284 +40,6 @@ const allQuizRef = firebase.database().ref("quizes/public/").orderByChild("time"
 const allQuizRef2 = firebase.database().ref("quizes/public/");
 
 const myREF = firebase.database().ref("usersP/" + uid + "/");
-
-function createQuiz() {
-   // Check if the user has given an input json file
-
-   const file = document.getElementById("importFile").files[0];
-
-   if (file) {
-      // If file is JSON
-
-      if (!file.name.endsWith(".json")) {
-         toast("Invalid File Type - Only JSON Files are allowed");
-         return false;
-      }
-
-      // Read the file
-      const reader = new FileReader();
-      reader.onload = function (e) {
-         try {
-            const json = JSON.parse(e.target.result);
-            const quizName = json.name;
-            const quizDescription = json.description;
-            const quizReward = json.reward;
-            let quizTime = json.time;
-            let visibility = json.visibility;
-
-            // SEE if the user has given a valid visibility if not leave it as it is
-
-            if (
-               document.getElementById("public").checked === false &&
-               document.getElementById("private").checked === false
-            ) {
-               visibility = visibility;
-            } else {
-               if (document.getElementById("public").checked) {
-                  visibility = "public";
-               } else {
-                  visibility = "private";
-               }
-            }
-
-            const quizAnswerTime = json.answerTime;
-            const quizPoints = json.pointsPerQuestion;
-            let questionsArray = [];
-            const questions = json.questions;
-            let time = document.getElementById("quizTime").value;
-            let unlockTime = 0;
-            let correctAnsRevealT = 0;
-            let timeInTimestamp = new Date(time).getTime();
-            quizTime = new Date(time).getTime();
-
-            for (let i = 0; i < questions.length; i++) {
-               const question = questions[i];
-
-               let questionUnlock = timeInTimestamp + waitTimeBetweenQuestions + unlockTime;
-
-               let correctAnsRevealTime = timeInTimestamp + correctAnsRevealT;
-               correctAnsRevealT += quizAnswerTime * 1000;
-
-               if (i === 0) {
-                  questionUnlock = timeInTimestamp;
-                  unlockTime += quizAnswerTime * 1000;
-               } else {
-                  unlockTime += quizAnswerTime * 1000 + waitTimeBetweenQuestions;
-               }
-
-               let questionObject = {
-                  question: question.question,
-                  answers: [
-                     question.answers[0],
-                     question.answers[1],
-                     question.answers[2],
-                     question.answers[3],
-                  ],
-                  correct: question.correct,
-                  unlockTime: questionUnlock,
-                  correctAnsRevealTime: correctAnsRevealTime,
-               };
-               questionsArray.push(questionObject);
-            }
-
-            const quiz = {
-               name: quizName,
-               description: quizDescription,
-               reward: quizReward,
-               time: quizTime,
-               visibility: visibility,
-               questions: questionsArray,
-               creator: uid,
-               creation_time: Date.now(),
-               leaderboard: [],
-               pointsPerQuestion: quizPoints,
-               answerTime: quizAnswerTime,
-               responses: [],
-               waitTimeBetweenQuestions: waitTimeBetweenQuestions,
-            };
-            console.log(quiz);
-            let randomQuizCode = Math.floor(Math.random() * 1000000000);
-            quiz.code = randomQuizCode;
-            // Add the quiz to the database
-            if (visibility === "public") {
-               database.ref("quizes/public/").push().set(quiz);
-               database
-                  .ref("quizesP/" + uid + "/")
-                  .push()
-                  .set(quiz);
-               toast("Quiz Created Successfully");
-            } else {
-               database.ref(`quizes/private/${randomQuizCode}`).set(quiz);
-               database
-                  .ref("quizesP/" + uid + "/")
-                  .push()
-                  .set(quiz);
-               toast("Quiz Created Successfully with code: " + randomQuizCode);
-            }
-         } catch (error) {
-            toast("Invalid JSON File");
-            return false;
-         }
-      };
-      reader.readAsText(file);
-   } else {
-      const quizName = document.getElementById("qtitle").value;
-      const quizDescription = document.getElementById("qdescription").value;
-      const quizReward = document.getElementById("quizReward").value;
-      const quizTime = document.getElementById("quizTime").value;
-      const public = document.getElementById("public").checked;
-      const private = document.getElementById("private").checked;
-
-      let visibility;
-
-      if (public) {
-         visibility = "public";
-      } else if (private) {
-         visibility = "private";
-      } else {
-         visibility = "public";
-      }
-
-      const quizAnswerTime = document.getElementById("quizAnswerTime").value;
-      const quizPoints = document.getElementById("quizPoints").value;
-
-      let questionsArray = [];
-
-      let time = new Date(quizTime);
-
-      const questions = document.getElementById("questions").children;
-
-      let unlockTime = 0;
-      let correctAnsRevealT = 0;
-
-      let timeInTimestamp = time.getTime();
-
-      for (let i = 0; i < questions.length; i++) {
-         let question = questions[i].children;
-
-         // Make question unlock time 5 s after each other question to prevent cheating and to make the quiz more fun
-
-         let questionUnlock = timeInTimestamp + waitTimeBetweenQuestions + unlockTime;
-
-         let correctAnsRevealTime = timeInTimestamp + correctAnsRevealT;
-         correctAnsRevealT += quizAnswerTime * 1000;
-
-         if (i === 0) {
-            questionUnlock = timeInTimestamp;
-            unlockTime += quizAnswerTime * 1000;
-         } else {
-            unlockTime += quizAnswerTime * 1000 + waitTimeBetweenQuestions;
-         }
-
-         let questionObject = {
-            question: question[0].value,
-            answers: [question[1].value, question[2].value, question[3].value, question[4].value],
-            correct: question[5].value,
-            unlockTime: questionUnlock,
-            correctAnsRevealTime: correctAnsRevealTime,
-         };
-
-         questionsArray.push(questionObject);
-      }
-
-      const quiz = {
-         name: quizName,
-         description: quizDescription,
-         reward: quizReward,
-         time: new Date(quizTime).getTime(),
-         visibility: visibility,
-         questions: questionsArray,
-         creator: uid,
-         creation_time: Date.now(),
-         leaderboard: [],
-         pointsPerQuestion: quizPoints,
-         answerTime: quizAnswerTime,
-         responses: [],
-         waitTimeBetweenQuestions: waitTimeBetweenQuestions,
-      };
-
-      console.log(quiz);
-
-      let randomQuizCode = Math.floor(Math.random() * 1000000000);
-
-      quiz.code = randomQuizCode;
-
-      // Add the quiz to the database
-
-      if (visibility === "public") {
-         database.ref("quizes/public/").push().set(quiz);
-         database
-            .ref("quizesP/" + uid + "/")
-            .push()
-            .set(quiz);
-         toast("Quiz Created Successfully");
-      } else {
-         database.ref(`quizes/private/${randomQuizCode}`).push().set(quiz);
-         database
-            .ref("quizesP/" + uid + "/")
-            .push()
-            .set(quiz);
-         toast("Quiz Created Successfully with code: " + randomQuizCode);
-      }
-   }
-}
-
-let questionNO = 0;
-
-function addQuestion() {
-   questionNO++;
-   const question = document.getElementById("questions");
-
-   let qI = document.createElement("input");
-   qI.type = "text";
-   qI.placeholder = "Question " + questionNO;
-   qI.className = "form-control";
-
-   let aI = document.createElement("input");
-   aI.type = "text";
-   aI.placeholder = "A";
-   aI.className = "form-control";
-
-   let bI = document.createElement("input");
-   bI.type = "text";
-   bI.placeholder = "B";
-   bI.className = "form-control";
-
-   let cI = document.createElement("input");
-   cI.type = "text";
-   cI.placeholder = "C";
-   cI.className = "form-control";
-
-   let dI = document.createElement("input");
-   dI.type = "text";
-   dI.placeholder = "D";
-   dI.className = "form-control";
-
-   let correctI = document.createElement("input");
-   correctI.type = "text";
-   correctI.placeholder = "Correct Answer";
-   correctI.className = "form-control";
-
-   let questionDiv = document.createElement("div");
-   questionDiv.className = "form-group";
-
-   let deleteButton = document.createElement("span");
-   deleteButton.className = "btn btn-danger";
-   deleteButton.innerHTML = `<i class="fa-solid fa-trash"></i>`;
-   deleteButton.onclick = function () {
-      question.removeChild(questionDiv);
-   };
-
-   questionDiv.appendChild(qI);
-   questionDiv.appendChild(aI);
-   questionDiv.appendChild(bI);
-   questionDiv.appendChild(cI);
-   questionDiv.appendChild(dI);
-   questionDiv.appendChild(correctI);
-   questionDiv.appendChild(deleteButton);
-
-   question.appendChild(questionDiv);
-}
 
 let timeNOW;
 
@@ -356,30 +79,6 @@ async function syncUserTimeToRealTime() {
 
       const timeDifference = clientRequestTime - serverTime;
 
-      // console.log("Time difference:", timeDifference);
-
-      // // Log whether the client is ahead or behind the server
-      // if (timeDifference > 100) {
-      //    console.log(
-      //       `Your time is ${Math.abs(timeDifference / 1000).toFixed(
-      //          1
-      //       )} seconds ahead of the server.`
-      //    );
-
-      //    console.log(
-      //       `It has been adjusted to ${(synchronizedTimeOnClient - serverTime) / 1000} seconds.`
-      //    );
-      // } else if (timeDifference < -100) {
-      //    console.log(
-      //       `Your time is ${Math.abs(timeDifference / 1000).toFixed(1)} seconds behind the server.`
-      //    );
-      //    console.log(
-      //       `It has been adjusted to ${(synchronizedTimeOnClient - serverTime) / 1000} seconds.`
-      //    );
-      // } else {
-      //    console.log("Your time is synchronized with the server.");
-      // }
-
       let ping = removeTags(responseTime.toFixed(2));
       let pingSTR;
 
@@ -393,24 +92,14 @@ async function syncUserTimeToRealTime() {
 
       document.getElementById("ping").innerHTML = pingSTR;
 
+      timeDiff = serverTime - clientRequestTime;
+
       return synchronizedTimeOnClient.getTime();
    } catch (error) {
       console.error("Error syncing time:", error.message);
       return null;
    }
 }
-
-// function syncTime() {
-//    fetch(api)
-//       .then((response) => {
-//          return response.json();
-//       })
-//       .then((data) => {
-//          timeNOW = data.unixtime * 1000;
-//          timeDiff = timeNOW - new Date().getTime();
-//       });
-//    return timeNOW;
-// }
 
 setInterval(() => {
    syncUserTimeToRealTime().then((timestamp) => {
@@ -430,8 +119,13 @@ function loadAllQuizes() {
    allQuizRef.limitToLast(items).on("child_added", (snapshot) => {
       const quizes = snapshot.val();
 
-      const quizKey = removeTags(snapshot.key);
+      if (!quizes) {
+         document.getElementById("loading").style.display = "none";
 
+         return;
+      }
+
+      const quizKey = snapshot.key;
       const quizesDiv = document.getElementById("quizContainer");
 
       let quizObject = quizes;
@@ -731,7 +425,17 @@ function loadQuiz(quizKey) {
                }
 
                if (enrolledInQuiz) {
-                  toast("The quiz has not started yet");
+                  openModal(
+                     "Already enrolled in the quiz",
+                     "You are already enrolled in this quiz, make sure to click the quiz again when the time says 'Started' to join the quiz.\n\n When you join the quiz make sure you don't change tabs or you will be disqualified. The quiz will start in " +
+                        Math.floor((quizStartTime - secureTIMENOW) / 1000) +
+                        " seconds."
+                  );
+
+                  autoJoinQuizKey = quizKey;
+                  setTimeout(() => {
+                     loadQuizPage(autoJoinQuizKey);
+                  }, Math.floor(quizStartTime - secureTIMENOW));
                } else {
                   // Enroll the user in the quiz
                   firebase
@@ -740,7 +444,16 @@ function loadQuiz(quizKey) {
                      .child("enrolled")
                      .push()
                      .set(quizKey);
-                  toast("You have been enrolled in the quiz");
+                  openModal(
+                     "Successfully enrolled in the quiz",
+                     "You are now enrolled in this quiz, make sure to click the quiz again when the time says 'Started' to join the quiz.\n\n When you join the quiz make sure you don't change tabs or you will be disqualified. The quiz will start in " +
+                        Math.floor((quizStartTime - secureTIMENOW) / 1000) +
+                        " seconds."
+                  );
+                  autoJoinQuizKey = quizKey;
+                  setTimeout(() => {
+                     loadQuizPage(autoJoinQuizKey);
+                  }, Math.floor(quizStartTime - secureTIMENOW));
                }
             });
       } else {
@@ -764,7 +477,10 @@ function loadQuiz(quizKey) {
                   // Load the quiz
                   loadQuizPage(quizKey);
                } else {
-                  toast("You are not enrolled in this quiz");
+                  openModal(
+                     "Not enrolled in the quiz",
+                     "We are sorry but you are not enrolled in this quiz, next time make sure to enroll in the quiz before it starts."
+                  );
                }
             });
       }
@@ -792,6 +508,7 @@ let quizWaitingTime = waitTimeBetweenQuestions;
 
 let shownQuestions = [];
 let quizOver = false; // flag to indicate if the quiz is over
+let qNumber = 0;
 
 function loadQuizPage(qD) {
    document.getElementById("quizBB").classList.remove("hidden");
@@ -816,6 +533,8 @@ function loadQuizPage(qD) {
       answerT = quizData.answerTime;
       quizCode = quizData.code;
       quizType = quizData.visibility;
+
+      showLeaderboard();
 
       // If waitingTimeBetweenQuestions is not defined then set it to 5 seconds
 
@@ -1097,6 +816,10 @@ function showLeaderboard() {
    leaderboardRef.orderByChild("points").on("value", (snapshot) => {
       const leaderboard = snapshot.val();
 
+      if (!leaderboard) {
+         return;
+      }
+
       let key = snapshot.key;
 
       leaderboardD.innerText = "";
@@ -1201,123 +924,123 @@ function endQuiz() {
    }, 60000);
 }
 
-// // Security check, if the user changes tab then don't allow him answer the question
-let warns = 0;
-window.addEventListener("blur", () => {
-   // Check if the user is enrolled in the quiz
-   firebase
-      .database()
-      .ref("usersP/" + uid + "/")
-      .child("enrolled")
-      .once("value", (snapshot) => {
-         const enrolled = snapshot.val();
+// // // Security check, if the user changes tab then don't allow him answer the question
+// let warns = 0;
+// window.addEventListener("blur", () => {
+//    // Check if the user is enrolled in the quiz
+//    firebase
+//       .database()
+//       .ref("usersP/" + uid + "/")
+//       .child("enrolled")
+//       .once("value", (snapshot) => {
+//          const enrolled = snapshot.val();
 
-         let enrolledInQuiz = false;
+//          let enrolledInQuiz = false;
 
-         for (let enrolledKey in enrolled) {
-            if (enrolled[enrolledKey] === quizKey) {
-               enrolledInQuiz = true;
-            }
-         }
-      });
+//          for (let enrolledKey in enrolled) {
+//             if (enrolled[enrolledKey] === quizKey) {
+//                enrolledInQuiz = true;
+//             }
+//          }
+//       });
 
-   // Check if the quiz is over
+//    // Check if the quiz is over
 
-   if (
-      !quizOver &&
-      document.getElementById("timer").innerText !== "Verifying..." &&
-      tm1 > 0 &&
-      document.getElementById("timer").innerText !== "The quiz has ended!" &&
-      document.getElementById("quizBB").classList.contains("hidden") === false
-   ) {
-      warns++;
-      console.log(warns);
-      switch (warns) {
-         case 1:
-            alert("You are not allowed to change tabs, if you do you will be disqualified!");
-            break;
-         case 2:
-            alert("This is your last warning, if you change tabs you will be disqualified!");
-            break;
-         case 3:
-            // Remove 700 points from the user's account
-            alert("You have lost 700 points for changing tabs!");
-            firebase
-               .database()
-               .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard")
-               .once("value", (snapshot) => {
-                  const leaderboard = snapshot.val();
+//    if (
+//       !quizOver &&
+//       document.getElementById("timer").innerText !== "Verifying..." &&
+//       tm1 > 0 &&
+//       document.getElementById("timer").innerText !== "The quiz has ended!" &&
+//       document.getElementById("quizBB").classList.contains("hidden") === false
+//    ) {
+//       warns++;
+//       console.log(warns);
+//       switch (warns) {
+//          case 1:
+//             alert("You are not allowed to change tabs, if you do you will be disqualified!");
+//             break;
+//          case 2:
+//             alert("This is your last warning, if you change tabs you will be disqualified!");
+//             break;
+//          case 3:
+//             // Remove 700 points from the user's account
+//             alert("You have lost 700 points for changing tabs!");
+//             firebase
+//                .database()
+//                .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard")
+//                .once("value", (snapshot) => {
+//                   const leaderboard = snapshot.val();
 
-                  for (let leaderboardKey in leaderboard) {
-                     const leaderboardObject = leaderboard[leaderboardKey];
+//                   for (let leaderboardKey in leaderboard) {
+//                      const leaderboardObject = leaderboard[leaderboardKey];
 
-                     if (leaderboardObject.uid === uid) {
-                        firebase
-                           .database()
-                           .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard/" + leaderboardKey)
-                           .update({
-                              points: Math.max(0, Number(leaderboardObject.points) - 700),
-                           });
-                     }
-                  }
-               });
-            break;
-         case 4:
-            alert("You have been disqualified! ");
-            // Unenroll the user from the quiz
-            firebase
-               .database()
-               .ref("usersP/" + uid + "/")
-               .child("enrolled")
-               .once("value", (snapshot) => {
-                  const enrolled = snapshot.val();
+//                      if (leaderboardObject.uid === uid) {
+//                         firebase
+//                            .database()
+//                            .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard/" + leaderboardKey)
+//                            .update({
+//                               points: Math.max(0, Number(leaderboardObject.points) - 700),
+//                            });
+//                      }
+//                   }
+//                });
+//             break;
+//          case 4:
+//             alert("You have been disqualified! ");
+//             // Unenroll the user from the quiz
+//             firebase
+//                .database()
+//                .ref("usersP/" + uid + "/")
+//                .child("enrolled")
+//                .once("value", (snapshot) => {
+//                   const enrolled = snapshot.val();
 
-                  for (let enrolledKey in enrolled) {
-                     if (enrolled[enrolledKey] === quizKey) {
-                        firebase
-                           .database()
-                           .ref("usersP/" + uid + "/")
-                           .child("enrolled")
-                           .child(enrolledKey)
-                           .remove();
-                     }
-                  }
-               })
-               .then(() => {
-                  // Remove the user from the leaderboard
-                  firebase
-                     .database()
-                     .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard")
-                     .once("value", (snapshot) => {
-                        const leaderboard = snapshot.val();
+//                   for (let enrolledKey in enrolled) {
+//                      if (enrolled[enrolledKey] === quizKey) {
+//                         firebase
+//                            .database()
+//                            .ref("usersP/" + uid + "/")
+//                            .child("enrolled")
+//                            .child(enrolledKey)
+//                            .remove();
+//                      }
+//                   }
+//                })
+//                .then(() => {
+//                   // Remove the user from the leaderboard
+//                   firebase
+//                      .database()
+//                      .ref(`quizesR/${quizType}/` + quizKey + "/leaderboard")
+//                      .once("value", (snapshot) => {
+//                         const leaderboard = snapshot.val();
 
-                        for (let leaderboardKey in leaderboard) {
-                           const leaderboardObject = leaderboard[leaderboardKey];
+//                         for (let leaderboardKey in leaderboard) {
+//                            const leaderboardObject = leaderboard[leaderboardKey];
 
-                           if (leaderboardObject.uid === uid) {
-                              firebase
-                                 .database()
-                                 .ref(
-                                    `quizesR/${quizType}/` +
-                                       quizKey +
-                                       "/leaderboard/" +
-                                       leaderboardKey
-                                 )
-                                 .remove();
-                           }
-                        }
-                     })
-                     .then(() => {
-                        window.location.reload();
-                     });
-               });
+//                            if (leaderboardObject.uid === uid) {
+//                               firebase
+//                                  .database()
+//                                  .ref(
+//                                     `quizesR/${quizType}/` +
+//                                        quizKey +
+//                                        "/leaderboard/" +
+//                                        leaderboardKey
+//                                  )
+//                                  .remove();
+//                            }
+//                         }
+//                      })
+//                      .then(() => {
+//                         window.location.reload();
+//                      });
+//                });
 
-            break;
-         default:
-            break;
-      }
-   }
-});
+//             break;
+//          default:
+//             break;
+//       }
+//    }
+// });
 
 function removeTags(str) {
    if (str === null || str === "") return false;
@@ -1673,3 +1396,57 @@ navLinks.forEach((link) => {
       navBurger.classList.remove("active");
    });
 });
+
+function openModal(title = "", text = "Default text", image = false) {
+   let modalContent = "";
+   if (image !== false && image !== "") {
+      modalContent = `
+       <h2 class="text-lg font-bold">${title}</h2>
+       <p>${text}</p>
+       <img src="${image}" alt="Modal image" class="mt-4 rounded-lg">
+     `;
+   } else {
+      modalContent = `
+       <h2 class="text-lg font-bold">${title}</h2>
+       <p>${text}</p>
+     `;
+   }
+
+   const modalOverlay = document.createElement("div");
+   modalOverlay.classList.add("modal-overlay");
+   modalOverlay.onclick = closeModal;
+
+   const modalContainer = document.createElement("div");
+   modalContainer.classList.add("modal-container");
+
+   const modalHeader = document.createElement("div");
+   modalHeader.classList.add("modal-header");
+
+   const modalContentWrapper = document.createElement("div");
+   modalContentWrapper.classList.add("modal-content");
+   modalContentWrapper.innerHTML = modalContent;
+
+   const modalFooter = document.createElement("div");
+   modalFooter.classList.add("modal-footer");
+   const closeButton = document.createElement("button");
+   closeButton.innerText = "Close";
+   closeButton.classList.add("modal-close");
+   closeButton.onclick = closeModal;
+   modalFooter.appendChild(closeButton);
+
+   modalContainer.appendChild(modalHeader);
+   modalContainer.appendChild(modalContentWrapper);
+   modalContainer.appendChild(modalFooter);
+
+   const modal = document.createElement("div");
+   modal.id = "modal";
+   modal.appendChild(modalOverlay);
+   modal.appendChild(modalContainer);
+
+   document.body.appendChild(modal);
+}
+
+function closeModal() {
+   const modal = document.getElementById("modal");
+   modal.parentNode.removeChild(modal);
+}

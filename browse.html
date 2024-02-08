@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>eTapQuiz • Explore</title>
+
+      <link rel="stylesheet" href="style.css" />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link
+         href="https://fonts.googleapis.com/css2?family=Lato&family=Press+Start+2P&display=swap"
+         rel="stylesheet"
+      />
+
+      <script
+         defer
+         src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-auth.min.js"
+         integrity="sha512-GAEvFso2oksY5JFkHlrfLhZgAV6aL48qxnbxPnbKnNLeG/XsU/c0lh/g9gocZ2RtbRx6VDTqspPEy9ixWvbfzw=="
+         crossorigin="anonymous"
+         referrerpolicy="no-referrer"
+      ></script>
+
+      <script
+         defer
+         src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-firestore.min.js"
+         integrity="sha512-95HhZKEWw0vxywbO/5CJhf+KJqEDEmXGDeys3ylTMTuW50ccC26GcV7pPhTiYC8fH3jj0i4AwxRdIN5vfoLqmg=="
+         crossorigin="anonymous"
+         referrerpolicy="no-referrer"
+      ></script>
+      <script
+         defer
+         src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-database.js"
+      ></script>
+
+      <script defer src="https://kit.fontawesome.com/f45cd9c28c.js"></script>
+      <div id="victoryAA"></div>
+   </head>
+   <body>
+      <div class="nav" id="nav2">
+         <div class="nav__logo">eTapQuiz</div>
+         <div class="nav__links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="browse.html" class="active">Explore</a>
+            <a href="create.html">Create</a>
+            <a href="about.html">About</a>
+            <a href="account/profile.html">Account</a>
+         </div>
+         <div class="nav__auth" id="navAuth">
+            <span id="theme-switcher"><i class="fa-solid fa-moon"></i></span>
+            <span id="logout" onclick="logOut()"
+               ><i class="fa-solid fa-right-from-bracket"></i
+            ></span>
+         </div>
+         <div class="nav__burger" onclick="toggleMenu()">
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
+         </div>
+      </div>
+
+      <div class="loading-screen" id="loading">
+         <div class="loading-spinner"></div>
+      </div>
+
+      <div class="top5" id="top5">
+         <h1 id="h3">Public Quizes</h1>
+         <button class="btn" onclick="joinQuizCode()">Join a private Quiz</button>
+      </div>
+
+      <div id="quizContainer"></div>
+
+      <button id="loadMore" onclick="doDynamic()">Load More</button>
+
+      <div id="quizBB" class="hidden">
+         <div id="quizINFO">
+            <span id="quizTitle"></span>
+            <span id="quizDescription"> </span>
+            <span id="quizReward1">1</span>
+         </div>
+
+         <div id="quiz">
+            <div id="mainA">
+               <div id="question">
+                  <div id="questionText"></div>
+               </div>
+               <div id="answers">
+                  <div id="answer1" class="answer" onclick="checkAnswer(1)"></div>
+                  <div id="answer2" class="answer" onclick="checkAnswer(2)"></div>
+                  <div id="answer3" class="answer" onclick="checkAnswer(3)">4</div>
+                  <div id="answer4" class="answer" onclick="checkAnswer(4)"></div>
+               </div>
+               <div id="timer">
+                  <div id="timerBar"></div>
+               </div>
+            </div>
+            <div id="leaderboard">
+               <p id="leaderboardTitle">Leaderboard</p>
+               <div id="leaderboardList"></div>
+            </div>
+         </div>
+      </div>
+
+      <footer id="footer">
+         <p>Copyright 2024 - Erzen Krasniqi</p>
+      </footer>
+
+      <script
+         src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-app.min.js"
+         integrity="sha512-Gvs2fg+wkNjydmkwgHwwTkuWlr9Gz0hTjFwJ4InwYwbAA3rtL2kBIHt7YRfwVCdW77QF2Ne2DdHQVCcULM89ig=="
+         crossorigin="anonymous"
+         referrerpolicy="no-referrer"
+      ></script>
+
+      <script>
+         // Your web app's Firebase configuration
+         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+         const firebaseConfig = {
+            apiKey: "AIzaSyBfxhlQ5c8sk_SHKJTvQ6tWPdzVAt4PBSA",
+            authDomain: "tapquiz-571c1.firebaseapp.com",
+            databaseURL: "https://tapquiz-571c1-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "tapquiz-571c1",
+            storageBucket: "tapquiz-571c1.appspot.com",
+            messagingSenderId: "270518942009",
+            appId: "1:270518942009:web:44a9a6c1de48fe403550e8",
+            measurementId: "G-QRTCR1G4GB",
+         };
+         // Initialize Firebase
+         firebase.initializeApp(firebaseConfig);
+      </script>
+
+      <div id="victoryS">
+         <div class="victory"></div>
+         <div class="imposter">
+            <div class="spacesuit">
+               <div class="chest-and-head"></div>
+               <div class="legs"></div>
+               <div class="arm"></div>
+               <div class="helmet-glass"></div>
+            </div>
+         </div>
+         <div class="background"></div>
+         <div class="name"></div>
+      </div>
+
+      <div id="ping">Connecting...</div>
+
+      <script src="theme.js"></script>
+      <script src="authcheck.js" defer></script>
+      <script src="index.js" defer></script>
+      <script src="victory.js" defer></script>
+      <!-- <script defer src="security.js"></script> -->
+   </body>
+</html>

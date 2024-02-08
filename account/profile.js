@@ -20,16 +20,23 @@ firebase.auth().onAuthStateChanged((user) => {
             document.getElementById("email").innerText = data.email;
             document.getElementById("fullname").innerText = data.fullName;
             const lastLoginTimestamp = data.lastSignInTime;
-            const lastLoginDate = lastLoginTimestamp.toDate();
+            const lastLoginDate = undefined;
+            try {
+               if (lastLoginTimestamp instanceof Date) {
+                  lastLoginDate = lastLoginTimestamp;
+               } else {
+                  lastLoginDate = new Date(lastLoginTimestamp);
+               }
+               const dd = Intl.DateTimeFormat().format(lastLoginDate);
+
+               document.getElementById("lastLogin").innerText = dd;
+            } catch (error) {
+               document.getElementById("lastLogin").innerText = "Unknown";
+            }
 
             // Format the date to be more readable and in the user's local time
 
-            const dd = Intl.DateTimeFormat().format(lastLoginDate);
-
-            document.getElementById("lastLogin").innerText = dd;
-
             const uid = data.uid;
-            UID = uid;
 
             const userImage = data.photoURL;
 
@@ -40,6 +47,7 @@ firebase.auth().onAuthStateChanged((user) => {
             }
 
             document.getElementById("uid").innerText = uid;
+            document.getElementById("loading").style.display = "none";
          });
 
          // Get the user's profile data and put it in the form
@@ -221,13 +229,21 @@ function putProfileDataInForm() {
       document.getElementById("email").innerText = data.email;
       document.getElementById("fullname").innerText = data.fullName;
       const lastLoginTimestamp = data.lastSignInTime;
-      const lastLoginDate = lastLoginTimestamp.toDate();
+      const lastLoginDate = undefined;
+      try {
+         if (lastLoginTimestamp instanceof Date) {
+            lastLoginDate = lastLoginTimestamp;
+         } else {
+            lastLoginDate = new Date(lastLoginTimestamp);
+         }
+         const dd = Intl.DateTimeFormat().format(lastLoginDate);
+
+         document.getElementById("lastLogin").innerText = dd;
+      } catch (error) {
+         document.getElementById("lastLogin").innerText = "Unknown";
+      }
 
       // Format the date to be more readable and in the user's local time
-
-      const dd = Intl.DateTimeFormat().format(lastLoginDate);
-
-      document.getElementById("lastLogin").innerText = dd;
 
       const uid = data.uid;
 
@@ -296,4 +312,23 @@ function toast(message, duration = 4500, delay = 0) {
          toastContainer.remove();
       }, 300);
    };
+}
+
+function logOut() {
+   let conf = confirm("Are you sure you want to log out?");
+
+   if (!conf) {
+      return;
+   }
+
+   toast("Logging out...");
+   firebase
+      .auth()
+      .signOut()
+      .then(() => {
+         window.location.href = "./account/index.html";
+      })
+      .catch((error) => {
+         toast(error.message);
+      });
 }
