@@ -1,4 +1,5 @@
 # eTapQuiz - Online Quiz App
+[![CodeQL](https://github.com/ErzenXz/etapquiz/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/ErzenXz/etapquiz/actions/workflows/github-code-scanning/codeql) [![Deploy static content to Pages](https://github.com/ErzenXz/etapquiz/actions/workflows/static.yml/badge.svg)](https://github.com/ErzenXz/etapquiz/actions/workflows/static.yml)
 
 Welcome to eTapQuiz, an online quiz application where users can create quizzes, set start times, and challenge others to participate in live quizzes. This README provides an overview of the project, its features, and instructions for setup.
 
