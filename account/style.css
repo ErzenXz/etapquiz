@@ -54,6 +54,7 @@ body {
    border-radius: 6px;
    background: var(--sidebar);
    border: 1px solid var(--border);
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .form.signup {
@@ -76,10 +77,6 @@ header {
    font-weight: 600;
    color: var(--text-color);
    text-align: center;
-}
-
-form {
-   margin-top: 30px;
 }
 
 .form .field {
@@ -245,12 +242,29 @@ a.facebook:hover {
 }
 
 @media screen and (max-width: 400px) {
-   .form {
-      padding: 20px 10px;
+   .container {
+      flex-direction: column;
    }
 }
 
 ::selection {
    color: var(--text-color);
    background-color: #8abcf1; /* Blueish color */
+}
+
+form {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   gap: 20px;
+}
+
+.cf-turnstile {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   gap: 20px;
+   margin-bottom: 30px;
 }

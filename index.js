@@ -631,7 +631,9 @@ function showQuestion(question, pointsPerQuestion, answerTime, quizKey, nextQues
    timer.innerText = timeRemaining + "s";
 
    const timerInterval = setInterval(() => {
-      timeRemaining--;
+      timeRemaining = Math.ceil(
+         (nextQuestionUnlockTime - timeNOW - waitTimeBetweenQuestions) / 1000
+      );
       tm1 = timeRemaining;
       timer.innerText = timeRemaining + "s";
 
@@ -742,50 +744,30 @@ function checkAnswer(i) {
 
          const leaderboardRef = firebase
             .database()
-            .ref("quizesR/public/" + quizKey + "/leaderboard");
+            .ref("quizesR/public/" + quizKey + "/leaderboard/" + uid);
 
          // Put the user in the leaderboard if he is not already in it
 
          leaderboardRef.once("value", (snapshot) => {
             const leaderboard = snapshot.val();
 
-            let userInLeaderboard = false;
-
-            for (let leaderboardKey in leaderboard) {
-               const leaderboardObject = leaderboard[leaderboardKey];
-
-               if (leaderboardObject.uid === uid) {
-                  userInLeaderboard = true;
-               }
-            }
-
-            if (!userInLeaderboard) {
+            if (!leaderboard) {
                setTimeout(() => {
-                  leaderboardRef.push().set({
+                  leaderboardRef.set({
+                     fullname: fullname,
+                     username: username,
                      points: pointsPerQuestion,
                      uid: uid,
-                     username,
-                     email,
-                     fullname,
+                     updatedAt: timeNOW,
                   });
-               }, tm1 + 1000);
+               }, tm1 + 1500);
             } else {
-               // Update the points
-
-               for (let leaderboardKey in leaderboard) {
-                  const leaderboardObject = leaderboard[leaderboardKey];
-
-                  if (leaderboardObject.uid === uid) {
-                     setTimeout(() => {
-                        firebase
-                           .database()
-                           .ref("quizesR/public/" + quizKey + "/leaderboard/" + leaderboardKey)
-                           .update({
-                              points: Number(leaderboardObject.points) + Number(pointsPerQuestion),
-                           });
-                     }, tm1 + 1000);
-                  }
-               }
+               setTimeout(() => {
+                  leaderboardRef.update({
+                     points: Number(leaderboard.points) + pointsPerQuestion,
+                     updatedAt: timeNOW,
+                  });
+               }, tm1 + 1500);
             }
          });
       } else {
@@ -905,8 +887,14 @@ function toast(message, duration = 4500, delay = 0) {
 }
 
 function endQuiz() {
-   let winner =
-      document.getElementById("leaderboardList").children[0].children[0].innerText ?? "No one";
+   let winner = undefined;
+
+   try {
+      winner =
+         document.getElementById("leaderboardList").children[0].children[0].innerText ?? "No one";
+   } catch (error) {
+      winner = "No one";
+   }
 
    victory(winner);
 
@@ -1059,6 +1047,13 @@ function joinQuizCode() {
       return;
    }
 
+   // MAKE sure the code is numbers only and has no spaces
+
+   if (code.includes(" ") || isNaN(code)) {
+      toast("Invalid code");
+      return;
+   }
+
    // Check if the quiz is public or private
 
    firebase
@@ -1085,14 +1080,13 @@ function joinQuizCode() {
          // Calcule the time remaining
 
          const timeRemaining = quizTime - timeNOW;
+         let formattedTime = "Starts in: ";
 
          if (timeRemaining < 0 && timeNOW > quizEndTime) {
             toast("The quiz has ended");
             return;
          } else {
             // toast the user in how much time the quiz will start
-
-            let formattedTime = "Starts in: ";
 
             let days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
             let hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -1157,11 +1151,7 @@ function joinQuizCode() {
                         }, timeRemaining);
                         tm = true;
                      } else {
-                        toast(
-                           "You have been enrolled in the quiz, you will be redirected automatically in" +
-                              timeRemaining +
-                              "seconds"
-                        );
+                        toast("The quiz will start in " + formattedTime + "seconds");
                      }
                   } else {
                      // Enroll the user in the quiz

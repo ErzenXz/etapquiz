@@ -21,13 +21,13 @@ main h1 {
 
 @media (max-width: 768px) {
    main h1 {
-      font-size: 2rem;
+      font-size: 2.2rem;
    }
 }
 
 @media (max-width: 480px) {
    main h1 {
-      font-size: 1.5rem;
+      font-size: 1.7rem;
    }
 }
 
@@ -44,13 +44,17 @@ main p {
 
 @media (max-width: 768px) {
    main p {
-      font-size: 1.2rem;
+      font-size: 1rem;
+      margin-left: 10px;
+      margin-right: 10px;
    }
 }
 
 @media (max-width: 480px) {
    main p {
-      font-size: 1rem;
+      font-size: 0.9rem;
+      margin-left: 10px;
+      margin-right: 10px;
    }
 }
 
@@ -86,7 +90,6 @@ main a:hover {
 
 body {
    margin: auto;
-   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
    overflow: auto;
    background: linear-gradient(
       315deg,
