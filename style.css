@@ -215,6 +215,8 @@ body {
    font-weight: 700;
    color: var(--text);
    text-decoration: none;
+   cursor: pointer;
+   user-select: none;
 }
 
 .nav__logo:hover {

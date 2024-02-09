@@ -1,15 +1,9 @@
 firebase.auth().useDeviceLanguage();
-
 firebase.auth().onAuthStateChanged((user) => {
    if (user) {
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/v8/firebase.User
       console.log("User is logged in!");
-      //   window.location.href = location.origin;
-      // ...
+      window.location.href = location.origin;
    } else {
-      // User is signed out
-      // ...
       console.log("User is not logged in!");
    }
 });
@@ -41,7 +35,13 @@ links.forEach((link) => {
    });
 });
 
-async function login() {
+let form = document.getElementById("loginS");
+let form2 = document.getElementById("signupS");
+
+form.addEventListener("submit", async function (e) {
+   e.preventDefault();
+   let formData = new FormData(document.getElementById("loginS"));
+
    let email = document.getElementById("email").value;
    let password = document.getElementById("password").value;
 
@@ -52,6 +52,80 @@ async function login() {
    if (password == "") {
       toast("Please enter a password");
       return;
+   }
+
+   let turnstile = formData.get("cf-turnstile-response");
+
+   const url =
+      "https://cors.erzengames.workers.dev/https://authentication.verify.q.erzen.tk/?token=" +
+      turnstile;
+
+   const result = await fetch(url).then((response) => response.json());
+
+   console.log(result);
+   if (result.status == "success") {
+      login(email, password, "cf-secure");
+   } else {
+      toast("Please complete the captcha!", 3000);
+      location.reload();
+   }
+});
+
+form2.addEventListener("submit", async function (e) {
+   e.preventDefault();
+   let formData = new FormData(form2);
+
+   let email = document.getElementById("email-r").value;
+   let password = document.getElementById("password-r").value;
+   let password2 = document.getElementById("password-2r").value;
+   let fullName = document.getElementById("name").value;
+   let username = document.getElementById("username").value;
+   let turnstile = formData.get("cf-turnstile-response");
+
+   if (email == "") {
+      toast("Please enter an email address");
+      return;
+   }
+   if (password == "") {
+      toast("Please enter an password");
+      return;
+   }
+   if (password2 == "") {
+      toast("Please enter the second password");
+      return;
+   }
+   if (password != password2) {
+      toast("Passwords do not match");
+      return;
+   }
+
+   if (fullName == "") {
+      toast("Please enter your full name");
+      return;
+   }
+
+   if (username == "") {
+      toast("Please enter a username");
+      return;
+   }
+
+   const url =
+      "https://cors.erzengames.workers.dev/https://authentication.verify.q.erzen.tk/?token=" +
+      turnstile;
+
+   const result = await fetch(url).then((response) => response.json());
+
+   if (result.status == "success") {
+      signup(email, password, password2, fullName, username, "cf-secure");
+   } else {
+      toast("Please complete the captcha!", 3000);
+      location.reload();
+   }
+});
+
+async function login(email, password, caller) {
+   if (caller != "cf-secure") {
+      return false;
    }
 
    toast("Please wait...", 3000);
@@ -73,7 +147,6 @@ async function login() {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-         // Get the user data from the database
          let uid = firebase.auth().currentUser.uid;
          firebase
             .firestore()
@@ -83,8 +156,6 @@ async function login() {
             .then(async (doc) => {
                if (doc.exists) {
                   let userData = doc.data();
-
-                  // Get the time into Firebase Timestamp format
                   let updatedLastSignInTime = firebase.firestore.Timestamp.fromDate(new Date());
 
                   let loginHistory = {
@@ -96,10 +167,6 @@ async function login() {
                   let updatedLoginHistoryArray = userData.loginHistoryArray;
                   updatedLoginHistoryArray.push(loginHistory);
 
-                  // If the user has not verified their email, send the verification email
-
-                  // Get the data from authentication
-
                   let userA = firebase.auth().currentUser;
                   let emailVerified = userA.emailVerified;
 
@@ -108,11 +175,9 @@ async function login() {
                         .auth()
                         .currentUser.sendEmailVerification()
                         .then(function () {
-                           // Email sent.
                            toast("Verification email has been sent to your email!", 3000);
                         })
                         .catch(function (error) {
-                           // An error happened.
                            toast("Error sending verification email!", 3000);
                         });
                   } else {
@@ -177,40 +242,9 @@ async function login() {
 
 // Function to signup using email and password in Firebase Authentication
 
-async function signup() {
-   let email = document.getElementById("email-r").value;
-   let password = document.getElementById("password-r").value;
-   let password2 = document.getElementById("password-2r").value;
-
-   let fullName = document.getElementById("name").value;
-
-   let username = document.getElementById("username").value;
-
-   if (email == "") {
-      toast("Please enter an email address");
-      return;
-   }
-   if (password == "") {
-      toast("Please enter an password");
-      return;
-   }
-   if (password2 == "") {
-      toast("Please enter the second password");
-      return;
-   }
-   if (password != password2) {
-      toast("Passwords do not match");
-      return;
-   }
-
-   if (fullName == "") {
-      toast("Please enter your full name");
-      return;
-   }
-
-   if (username == "") {
-      toast("Please enter a username");
-      return;
+async function signup(email, password, password2, fullName, username, caller) {
+   if (caller != "cf-secure") {
+      return false;
    }
 
    // Make sure the username is not taken
@@ -476,10 +510,8 @@ function forgotPassword() {
       return;
    }
 
-   // ANTIBOT with prompt
-
-   let a = Math.floor(Math.random() * 10);
-   let b = Math.floor(Math.random() * 10);
+   let a = Math.max(Math.floor(Math.random() * 10), 1);
+   let b = Math.max(Math.floor(Math.random() * 10), 1);
    let promptAnswer = prompt(
       `Please enter the answer to the following question: What is ${a} + ${b}?`
    );

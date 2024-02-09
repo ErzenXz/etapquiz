@@ -38,6 +38,21 @@ const allQuizRef = firebase.database().ref("quizes/public/").orderByChild("time"
 const allQuizRef2 = firebase.database().ref("quizes/public/");
 const myREF = firebase.database().ref("usersP/" + uid + "/");
 
+let fileInput = document.getElementById("importFile");
+
+fileInput.addEventListener("change", function () {
+   if (fileInput.files.length > 0 && fileInput.files[0].name.endsWith(".json")) {
+      document.getElementById("qtitle").style.display = "none";
+      document.getElementById("qdescription").style.display = "none";
+      document.getElementById("quizReward").style.display = "none";
+      document.getElementById("quizAnswerTime").style.display = "none";
+      document.getElementById("quizPoints").style.display = "none";
+      document.getElementById("waitTimeBetweenQuestions").style.display = "none";
+      document.getElementById("questions").style.display = "none";
+      document.getElementById("addQuestion").style.display = "none";
+   }
+});
+
 function createQuiz() {
    const file = document.getElementById("importFile").files[0];
 
@@ -80,6 +95,11 @@ function createQuiz() {
             let questionsArray = [];
             const questions = json.questions;
             let time = document.getElementById("quizTime").value;
+
+            if (time === "") {
+               time = new Date().getTime() + 1000 * 60 * 60;
+            }
+
             let unlockTime = 0;
             let correctAnsRevealT = 0;
 
@@ -91,6 +111,17 @@ function createQuiz() {
             if (document.getElementById("waitTimeBetweenQuestions").value !== "") {
                waitTimeBetweenQuestions =
                   document.getElementById("waitTimeBetweenQuestions").value * 1000;
+            }
+
+            if (
+               waitTimeBetweenQuestions === 0 ||
+               waitTimeBetweenQuestions === "" ||
+               waitTimeBetweenQuestions === null ||
+               waitTimeBetweenQuestions === undefined ||
+               waitTimeBetweenQuestions < 3 ||
+               waitTimeBetweenQuestions > 90
+            ) {
+               waitTimeBetweenQuestions = 5000;
             }
 
             for (let i = 0; i < questions.length; i++) {
@@ -265,11 +296,63 @@ function createQuiz() {
       const quizAnswerTime = document.getElementById("quizAnswerTime").value;
       const quizPoints = document.getElementById("quizPoints").value;
 
+      if (quizName === "" || quizDescription === "" || quizTime === "") {
+         toast("Please fill out all the fields");
+         return false;
+      }
+
+      if (quizAnswerTime === "" || quizPoints === "") {
+         toast("Please fill out all the fields");
+         return false;
+      }
+
+      if (waitTimeBetweenQuestions === 0 || waitTimeBetweenQuestions === "") {
+         waitTimeBetweenQuestions = 5000;
+      }
+
+      if (
+         quizPoints === 0 ||
+         quizPoints === "" ||
+         quizPoints === null ||
+         quizPoints === undefined ||
+         quizPoints < 10 ||
+         quizPoints > 10000
+      ) {
+         quizPoints = 100;
+      }
+
+      if (
+         quizAnswerTime === 0 ||
+         quizAnswerTime === "" ||
+         quizAnswerTime === null ||
+         quizAnswerTime === undefined ||
+         quizAnswerTime < 5 ||
+         quizAnswerTime > 600
+      ) {
+         quizAnswerTime = 15;
+      }
+
+      if (
+         quizTime === 0 ||
+         quizTime === "" ||
+         quizTime === null ||
+         quizTime === undefined ||
+         quizTime < Date.now() + 1000 * 60 * 60 ||
+         quizTime > Date.now() + 1000 * 60 * 60 * 24 * 31
+      ) {
+         quizTime = Date.now() + 1000 * 60 * 60;
+      }
+
       let questionsArray = [];
 
       let time = new Date(quizTime);
 
       const questions = document.getElementById("questions").children;
+
+      if (questions.length === 0) {
+         toast("Please add at least one question");
+         return false;
+      }
 
       let unlockTime = 0;
       let correctAnsRevealT = 0;

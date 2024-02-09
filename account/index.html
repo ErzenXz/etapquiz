@@ -4,17 +4,9 @@
       <meta charset="UTF-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>eTapQuiz • Account</title>
-
-      <!-- CSS -->
+      <title>eTapQuiz • Authenticate</title>
       <link rel="stylesheet" href="style.css" />
-      <!-- <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-      <link
-         href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz@6..12&display=swap"
-         rel="stylesheet"
-      /> -->
-
+      <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
       <script
          src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-auth.min.js"
          integrity="sha512-GAEvFso2oksY5JFkHlrfLhZgAV6aL48qxnbxPnbKnNLeG/XsU/c0lh/g9gocZ2RtbRx6VDTqspPEy9ixWvbfzw=="
@@ -34,139 +26,132 @@
 
    <body>
       <section class="container forms">
-         <div class="form login">
-            <div class="form-content">
-               <header>Login</header>
-               <div class="field input-field">
-                  <input type="email" placeholder="Email" class="input" id="email" />
-               </div>
+         <form action="#" id="loginS">
+            <div class="form login">
+               <div class="form-content">
+                  <header>Login</header>
+                  <div class="field input-field">
+                     <input type="email" placeholder="Email" class="input" id="email" />
+                  </div>
 
-               <div class="field input-field">
-                  <input type="password" placeholder="Password" class="password" id="password" />
-                  <i class="bx bx-hide eye-icon"></i>
-               </div>
+                  <div class="field input-field">
+                     <input type="password" placeholder="Password" class="password" id="password" />
+                     <i class="bx bx-hide eye-icon"></i>
+                  </div>
 
-               <div class="form-link">
-                  <a href="#forgot" class="forgot-pass" onclick="forgotPassword()"
-                     >Forgot password?</a
-                  >
-               </div>
+                  <div class="field cloudflare" id="cf1">
+                     <br />
+                     <div
+                        class="cf-turnstile"
+                        data-sitekey="0x4AAAAAAARhH3-gi_zdnkqI"
+                        data-callback="javascriptCallback"
+                        id="cf1-1"
+                     ></div>
+                  </div>
+                  <br />
 
-               <div class="field button-field">
-                  <button onclick="login()">Login</button>
-               </div>
+                  <div class="form-link">
+                     <a href="#forgot" class="forgot-pass" onclick="forgotPassword()"
+                        >Forgot password?</a
+                     >
+                  </div>
 
-               <div class="form-link">
-                  <span
-                     >Don't have an account? <a href="#" class="link signup-link">Signup</a></span
-                  >
-               </div>
-            </div>
+                  <div class="field button-field">
+                     <button type="submit" id="loginButton">Login</button>
+                  </div>
 
-            <!-- <div class="line"></div> -->
-
-            <!-- <div class="media-options">
-                <a href="#" class="field facebook">
-                    <i class='bx bxl-facebook facebook-icon'></i>
-                    <span onclick="facebookLogin()">Login with Facebook</span>
-                </a>
-            </div>
-
-            <div class="media-options">
-                <a href="#" class="field google">
-                    <i class='bx bxl-google google-icon'></i>
-                    <span onclick="googleLogin()">Login with Google</span>
-                </a>
-            </div> -->
-         </div>
-
-         <!-- Signup Form -->
-
-         <div class="form signup">
-            <div class="form-content">
-               <header>Signup</header>
-
-               <div class="field input-field">
-                  <input
-                     type="text"
-                     placeholder="Full Name"
-                     autocomplete="name"
-                     class="input"
-                     id="name"
-                  />
-               </div>
-
-               <div class="field input-field">
-                  <input
-                     type="text"
-                     placeholder="Username"
-                     autocomplete="username"
-                     class="input"
-                     id="username"
-                  />
-               </div>
-
-               <div class="field input-field">
-                  <input
-                     type="email"
-                     placeholder="Email"
-                     autocomplete="off"
-                     class="input"
-                     id="email-r"
-                  />
-               </div>
-
-               <div class="field input-field">
-                  <input
-                     type="password"
-                     placeholder="Password"
-                     autocomplete="new-password"
-                     class="password"
-                     id="password-r"
-                  />
-               </div>
-
-               <div class="field input-field">
-                  <input
-                     type="password"
-                     placeholder="Confirm password"
-                     autocomplete="new-password"
-                     class="password"
-                     id="password-2r"
-                  />
-                  <i class="bx bx-hide eye-icon"></i>
-               </div>
-
-               <div class="field button-field">
-                  <button onclick="signup()">Signup</button>
-               </div>
-
-               <div class="form-link">
-                  <span
-                     >Already have an account? <a href="#" class="link login-link">Login</a></span
-                  >
+                  <div class="form-link">
+                     <span
+                        >Don't have an account?
+                        <a href="#" class="link signup-link">Signup</a></span
+                     >
+                  </div>
                </div>
             </div>
+         </form>
 
-            <!-- <div class="line"></div>
+         <form action="#signupCallback" id="signupS">
+            <div class="form signup">
+               <div class="form-content">
+                  <header>Signup</header>
 
-            <div class="media-options">
-                <a href="#" class="field facebook">
-                    <i class='bx bxl-facebook facebook-icon'></i>
-                    <span onclick="facebookLogin()">Login with Facebook</span>
-                </a>
+                  <div class="field input-field">
+                     <input
+                        type="text"
+                        placeholder="Full Name"
+                        autocomplete="name"
+                        class="input"
+                        id="name"
+                     />
+                  </div>
+
+                  <div class="field input-field">
+                     <input
+                        type="text"
+                        placeholder="Username"
+                        autocomplete="username"
+                        class="input"
+                        id="username"
+                     />
+                  </div>
+
+                  <div class="field input-field">
+                     <input
+                        type="email"
+                        placeholder="Email"
+                        autocomplete="off"
+                        class="input"
+                        id="email-r"
+                     />
+                  </div>
+
+                  <div class="field input-field">
+                     <input
+                        type="password"
+                        placeholder="Password"
+                        autocomplete="new-password"
+                        class="password"
+                        id="password-r"
+                     />
+                  </div>
+
+                  <div class="field input-field">
+                     <input
+                        type="password"
+                        placeholder="Confirm password"
+                        autocomplete="new-password"
+                        class="password"
+                        id="password-2r"
+                     />
+                     <i class="bx bx-hide eye-icon"></i>
+                  </div>
+
+                  <div class="field cloudflare" id="cf2">
+                     <br />
+                     <div
+                        class="cf-turnstile"
+                        data-sitekey="0x4AAAAAAARhH3-gi_zdnkqI"
+                        data-callback="javascriptCallback"
+                        id="cf1-2"
+                     ></div>
+                  </div>
+                  <br />
+                  <br />
+                  <div class="field button-field">
+                     <button onclick="signup()">Signup</button>
+                  </div>
+
+                  <div class="form-link">
+                     <span
+                        >Already have an account?
+                        <a href="#" class="link login-link">Login</a></span
+                     >
+                  </div>
+               </div>
             </div>
-
-            <div class="media-options">
-                <a href="#" class="field google">
-                    <i class='bx bxl-google google-icon'></i>
-                    <span onclick="googleLogin()">Login with Google</span>
-                </a>
-            </div> -->
-         </div>
+         </form>
       </section>
 
-      <!-- JavaScript -->
       <script
          src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-app.min.js"
          integrity="sha512-Gvs2fg+wkNjydmkwgHwwTkuWlr9Gz0hTjFwJ4InwYwbAA3rtL2kBIHt7YRfwVCdW77QF2Ne2DdHQVCcULM89ig=="
@@ -176,7 +161,6 @@
       <script defer src="app.js"></script>
 
       <script>
-         // Your web app's Firebase configuration
          const firebaseConfig = {
             apiKey: "AIzaSyBfxhlQ5c8sk_SHKJTvQ6tWPdzVAt4PBSA",
             authDomain: "auth.erzen.tk",
@@ -187,7 +171,6 @@
             appId: "1:270518942009:web:44a9a6c1de48fe403550e8",
             measurementId: "G-QRTCR1G4GB",
          };
-         // Initialize Firebase
          firebase.initializeApp(firebaseConfig);
       </script>
    </body>
