@@ -56,9 +56,7 @@ form.addEventListener("submit", async function (e) {
 
    let turnstile = formData.get("cf-turnstile-response");
 
-   const url =
-      "https://cors.erzengames.workers.dev/https://authentication.verify.q.erzen.tk/?token=" +
-      turnstile;
+   const url = "https://authentication.verify.q.erzen.tk/?token=" + turnstile;
 
    const result = await fetch(url).then((response) => response.json());
 
@@ -109,9 +107,7 @@ form2.addEventListener("submit", async function (e) {
       return;
    }
 
-   const url =
-      "https://cors.erzengames.workers.dev/https://authentication.verify.q.erzen.tk/?token=" +
-      turnstile;
+   const url = "https://authentication.verify.q.erzen.tk/?token=" + turnstile;
 
    const result = await fetch(url).then((response) => response.json());
 
