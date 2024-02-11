@@ -742,6 +742,8 @@ function checkAnswer(i) {
             toast("Correct Answer! You got " + pointsPerQuestion + " points!");
          }, tm1 + 1500);
 
+         alert(uid + " " + quizKey);
+
          const leaderboardRef = firebase
             .database()
             .ref("quizesR/public/" + quizKey + "/leaderboard/" + uid);
