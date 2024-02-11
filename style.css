@@ -1109,6 +1109,7 @@ footer {
    width: 100%;
    min-height: 50vh;
    height: fit-content;
+   margin-bottom: 100px;
 }
 
 .profile .it {
