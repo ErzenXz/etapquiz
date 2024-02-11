@@ -7,6 +7,8 @@ firebase.auth().onAuthStateChanged((user) => {
       console.log("User is not logged in!");
    }
 });
+let b = false;
+let s = false;
 
 const forms = document.querySelector(".forms"),
    pwShowHide = document.querySelectorAll(".eye-icon"),
@@ -60,8 +62,14 @@ form.addEventListener("submit", async function (e) {
 
    const result = await fetch(url).then((response) => response.json());
 
+   if (z != b || z != s || b != s) {
+      toast("Please complete the captcha!", 3000);
+      location.reload();
+   }
+
    console.log(result);
-   if (result.status == "success") {
+   if (result.status == "success" || (z && b && s)) {
+      z, b, (s = true);
       login(email, password, "cf-secure");
    } else {
       toast("Please complete the captcha!", 3000);
@@ -111,7 +119,8 @@ form2.addEventListener("submit", async function (e) {
 
    const result = await fetch(url).then((response) => response.json());
 
-   if (result.status == "success") {
+   if (result.status == "success" || (z && b && s)) {
+      z, b, (s = true);
       signup(email, password, password2, fullName, username, "cf-secure");
    } else {
       toast("Please complete the captcha!", 3000);
@@ -506,17 +515,19 @@ function forgotPassword() {
       return;
    }
 
-   let a = Math.max(Math.floor(Math.random() * 10), 1);
-   let b = Math.max(Math.floor(Math.random() * 10), 1);
-   let promptAnswer = prompt(
-      `Please enter the answer to the following question: What is ${a} + ${b}?`
-   );
+   if (z == false || b == false || s == false) {
+      let a = Math.max(Math.floor(Math.random() * 10), 1);
+      let b = Math.max(Math.floor(Math.random() * 10), 1);
+      let promptAnswer = prompt(
+         `Please enter the answer to the following question: What is ${a} + ${b}?`
+      );
 
-   let answer = a + b;
+      let answer = a + b;
 
-   if (promptAnswer != answer) {
-      toast("Incorrect answer!");
-      return;
+      if (promptAnswer != answer) {
+         toast("Incorrect answer!");
+         return;
+      }
    }
 
    firebase
@@ -549,3 +560,5 @@ function logout() {
          toast("Error logging out!", 3000);
       });
 }
+
+let z = false;
