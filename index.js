@@ -661,6 +661,12 @@ function checkAnswer(i) {
    const answer = document.getElementById("answer" + i).innerText;
    const question = document.getElementById("questionText").innerText;
 
+   // If the quiz is over then return
+
+   if (quizOver) {
+      return;
+   }
+
    // If the button is disabled then return
 
    if (document.getElementById("answer" + i).classList.contains("disabled")) {
@@ -742,34 +748,81 @@ function checkAnswer(i) {
             toast("Correct Answer! You got " + pointsPerQuestion + " points!");
          }, tm1 + 1500);
 
-         alert(uid + " " + quizKey);
+         // const leaderboardRef = firebase
+         //    .database()
+         //    .ref("quizesR/public/" + quizKey + "/leaderboard/" + uid);
+
+         // // Put the user in the leaderboard if he is not already in it
+
+         // leaderboardRef.once("value", (snapshot) => {
+         //    const leaderboard = snapshot.val();
+
+         //    if (!leaderboard) {
+         //       setTimeout(() => {
+         //          leaderboardRef.set({
+         //             fullname: fullname,
+         //             username: username,
+         //             points: pointsPerQuestion,
+         //             uid: uid,
+         //             updatedAt: timeNOW,
+         //          });
+         //       }, tm1 + 1500);
+         //    } else {
+         //       setTimeout(() => {
+         //          leaderboardRef.update({
+         //             points: Number(leaderboard.points) + pointsPerQuestion,
+         //             updatedAt: timeNOW,
+         //          });
+         //       }, tm1 + 1500);
+         //    }
+         // });
 
          const leaderboardRef = firebase
             .database()
-            .ref("quizesR/public/" + quizKey + "/leaderboard/" + uid);
+            .ref("quizesR/public/" + quizKey + "/leaderboard");
 
          // Put the user in the leaderboard if he is not already in it
 
          leaderboardRef.once("value", (snapshot) => {
             const leaderboard = snapshot.val();
 
-            if (!leaderboard) {
+            let userInLeaderboard = false;
+
+            for (let leaderboardKey in leaderboard) {
+               const leaderboardObject = leaderboard[leaderboardKey];
+
+               if (leaderboardObject.uid === uid) {
+                  userInLeaderboard = true;
+               }
+            }
+
+            if (!userInLeaderboard) {
                setTimeout(() => {
-                  leaderboardRef.set({
-                     fullname: fullname,
-                     username: username,
+                  leaderboardRef.push().set({
                      points: pointsPerQuestion,
                      uid: uid,
-                     updatedAt: timeNOW,
+                     username,
+                     email,
+                     fullname,
                   });
-               }, tm1 + 1500);
+               }, tm1 + 1000);
             } else {
-               setTimeout(() => {
-                  leaderboardRef.update({
-                     points: Number(leaderboard.points) + pointsPerQuestion,
-                     updatedAt: timeNOW,
-                  });
-               }, tm1 + 1500);
+               // Update the points
+
+               for (let leaderboardKey in leaderboard) {
+                  const leaderboardObject = leaderboard[leaderboardKey];
+
+                  if (leaderboardObject.uid === uid) {
+                     setTimeout(() => {
+                        firebase
+                           .database()
+                           .ref("quizesR/public/" + quizKey + "/leaderboard/" + leaderboardKey)
+                           .update({
+                              points: Number(leaderboardObject.points) + Number(pointsPerQuestion),
+                           });
+                     }, tm1 + 1000);
+                  }
+               }
             }
          });
       } else {
