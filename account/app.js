@@ -2,7 +2,6 @@ firebase.auth().useDeviceLanguage();
 firebase.auth().onAuthStateChanged((user) => {
    if (user) {
       console.log("User is logged in!");
-      window.location.href = location.origin;
    } else {
       console.log("User is not logged in!");
    }
@@ -436,10 +435,11 @@ async function signup(email, password, password2, fullName, username, caller) {
                localStorage.setItem("user", JSON.stringify(userData));
 
                toast("Signup successful! ", 3000);
+               console.log("User data saved in the database!");
 
                setTimeout(() => {
                   window.location.href = location.origin;
-               }, 100);
+               }, 500);
             })
             .catch((error) => {
                console.error("Error while creating account: ", error);
